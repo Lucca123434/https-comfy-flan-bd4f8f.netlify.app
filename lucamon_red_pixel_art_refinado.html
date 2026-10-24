@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LUCAMON — Aventura Pixel Art</title>
+<style>
+:root{--ink:#e9f2ef;--paper:#102b3b;--red:#cf4945;--blue:#367fb7;--edge:#17303c;--gold:#e8c66e}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 12%,#32665e 0,#193b3b 42%,#091a22 100%);color:var(--ink);font:15px/1.45 system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;padding:18px;background-attachment:fixed}.frame{width:min(100%,1000px);padding:16px;background:linear-gradient(145deg,#183c4c,#0d2635);border:5px solid #d7bb6c;border-radius:8px;box-shadow:0 24px 70px #0008,inset 0 0 0 2px #f7e8b355,0 0 0 2px #142b35}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:3px 5px 12px;flex-wrap:wrap}.top b{font-size:21px;letter-spacing:.03em;color:#f6e8bc;text-shadow:0 2px #071a25}.top b:before{content:"✦ ";color:#edc45f}.speed-control{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:700;flex-wrap:wrap}.speed-control button{font:inherit;border:1px solid #6d5c42;background:linear-gradient(#f3d987,#c28d42);color:#17303b;padding:6px 9px;border-radius:3px;cursor:pointer;box-shadow:0 2px 0 #72542f}.speed-control button.active{background:linear-gradient(#fff0a5,#e8b84c);box-shadow:inset 0 0 0 1px #fff0a5,0 1px 0 #72542f}.screen{position:relative;background:#17242a;border:5px solid #d8bd70;overflow:hidden;box-shadow:inset 0 0 0 2px #fff1bf,0 5px 16px #0008}canvas{display:block;width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges}.hud{position:absolute;left:12px;top:12px;padding:8px 12px;background:linear-gradient(145deg,#123247f5,#071e2cf5);border:3px solid #e3c46e;border-radius:5px;box-shadow:0 3px 0 #071720, inset 0 0 0 1px #ffffff24;font-weight:750;color:#f4edda;max-width:calc(100% - 24px)}.hud small{font-weight:550}.dialog{position:absolute;inset:auto 0 0;background:linear-gradient(145deg,#102e42f7,#071d2cf7);border:4px solid #e5c66d;border-radius:5px;margin:0 8px 8px;min-height:105px;padding:15px 20px;display:none;line-height:1.5;box-shadow:0 0 0 2px #071721,0 -5px 18px #0005;color:#f4edda}.dialog.show{display:block}.dialog p{margin:0 0 10px}.options{display:flex;gap:8px;flex-wrap:wrap}.options button,.actions button{font:inherit;font-weight:700;border:1px solid #f1d887;background:linear-gradient(#f5d97c,#c18c40);padding:8px 12px;border-radius:3px;cursor:pointer;color:#172d39;box-shadow:0 2px 0 #73512d;transition:transform .12s,filter .12s}.options button:hover,.actions button:hover{background:linear-gradient(#fff0b1,#edc45d);filter:brightness(1.03);transform:translateY(-1px)}.actions{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 3px 0;flex-wrap:wrap}.hint{font-size:13px;color:#d7e6df}.badges{font-size:13px;color:#f0d78d;font-weight:700}button:focus{outline:3px solid #e2a92e;outline-offset:2px}progress{height:10px;accent-color:#5baf6a;vertical-align:middle} .hud progress{accent-color:#55d47b} .hud strong{color:#f7df8a} .screen{isolation:isolate} @media(max-width:600px){body{padding:6px}.frame{padding:8px;border-width:3px}.top b{font-size:18px}.hud{font-size:12px;left:6px;top:6px;padding:5px 8px}.dialog{padding:10px 12px;min-height:90px}.actions{padding-top:8px}}
+.cover{position:fixed;inset:0;z-index:99;display:grid;place-items:center;padding:18px;background:radial-gradient(ellipse at 50% 22%,#385c58 0,#182e32 56%,#0b171c 100%);}
+.cover-card{position:relative;width:min(900px,100%);min-height:510px;overflow:hidden;border:5px solid #d9c38d;border-radius:12px;background:linear-gradient(180deg,#2b5e66 0%,#1f454f 48%,#152b36 100%);box-shadow:0 30px 100px #000b,inset 0 0 0 2px #fff3;color:#fff4d9;text-align:center;padding:34px 22px 26px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;}
+.cover-card:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,#ffffff10 25%,transparent 25%) 0 0/22px 22px,radial-gradient(ellipse at 50% 55%,#d8bb6c30,transparent 45%);pointer-events:none}
+.cover-kicker{position:relative;letter-spacing:.35em;font-size:12px;font-weight:800;color:#bde6d8}.cover-logo{position:relative;margin:4px 0 0;font-size:clamp(48px,10vw,90px);line-height:.95;letter-spacing:.06em;font-weight:1000;color:#f7df8c;text-shadow:4px 5px 0 #9b543b,7px 8px 0 #15262d,-1px -1px 0 #fff4;}.cover-sub{position:relative;margin-top:14px;font-weight:700;font-size:clamp(14px,2.5vw,19px);letter-spacing:.08em;color:#e4f0dc}.cover-creature{position:relative;width:180px;height:155px;margin:4px auto -3px;filter:drop-shadow(0 15px 8px #07161c80)}.cover-creature svg{width:100%;height:100%;image-rendering:pixelated}.cover-actions{position:relative;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:18px}.cover-actions button{border:2px solid #fff0bf;border-radius:5px;padding:12px 24px;background:linear-gradient(#f6d878,#d99b45);color:#29383a;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 4px 0 #8e5938}.cover-actions button.secondary{background:linear-gradient(#e8f1d9,#a9c9b2);box-shadow:0 4px 0 #476d66}.cover-foot{position:relative;font-size:11px;letter-spacing:.12em;color:#bdd7cd;margin-top:22px}.cover[hidden]{display:none}
+@media(max-width:600px){.cover-card{min-height:470px;padding:28px 14px 20px}.cover-creature{width:150px;height:130px}.cover-logo{font-size:clamp(44px,13vw,70px)}}
+
+/* LUCAMON — acabamento da interface durante a aventura */
+:root{--ink:#203438;--paper:#fff5dc;--red:#c84d43;--blue:#368c99;--edge:#34464a;--gold:#e9c86e}
+body{background:radial-gradient(ellipse at 50% 5%,#638e7d 0,#294d4b 38%,#101e27 100%);padding:clamp(6px,2vw,22px)}
+.frame{width:min(100%,1060px);padding:clamp(8px,1.8vw,18px);background:linear-gradient(145deg,#f9edce 0%,#d5bd8b 100%);border:5px solid #34494a;border-radius:12px;box-shadow:0 26px 80px #06151caa,inset 0 0 0 2px #fff8, inset 0 -5px 0 #9c845b}
+.top{padding:4px 4px 13px;gap:10px}.top b{font-size:clamp(18px,2.5vw,26px);font-weight:950;letter-spacing:.055em;color:#24454a;text-shadow:0 2px 0 #fff9}.top b:before{content:"◆ ";color:#d4a642;text-shadow:1px 1px #8d4e3c}
+#status{display:inline-flex;align-items:center;min-height:30px;padding:5px 10px;border-radius:5px;background:linear-gradient(#fef7e4,#dfd0a8);border:1px solid #95815b;color:#34474a;font-size:12px;font-weight:800;box-shadow:inset 0 1px #fff}
+.speed-control{padding:5px 7px;border-radius:7px;background:#233f42;color:#f8edcc;box-shadow:inset 0 0 0 1px #ffffff24}.speed-control button{border:1px solid #8e9a7c;background:linear-gradient(#f9f0d5,#d9c69c);padding:6px 9px;border-radius:4px;color:#2d4243;box-shadow:0 2px 0 #142f30;font-weight:800}.speed-control button.active{background:linear-gradient(#ffe99a,#dfad43);border-color:#fff0b0;box-shadow:inset 0 0 0 1px #fff6,0 2px 0 #142f30}
+.screen{border:5px solid #253e43;border-radius:7px;background:#182c32;box-shadow:inset 0 0 0 2px #d7c38f,0 8px 20px #182c3540}
+.hud{left:12px;top:12px;padding:9px 13px;background:linear-gradient(145deg,#fff9e9f7,#dce9d9f5);border:2px solid #405e5a;border-radius:7px;box-shadow:0 4px 0 #172e3440,0 8px 18px #12232c30;color:#244349;font-size:14px;line-height:1.4;max-width:min(75%,420px)}.hud:before{content:"LUCAMON  ◆  " ;display:block;color:#b05a3c;font-size:10px;letter-spacing:.13em;font-weight:1000;margin-bottom:3px}.hud small{display:block;margin-top:3px;padding-top:4px;border-top:1px solid #9bb4a2;font-size:11px;color:#49625a;font-weight:650}
+.dialog{inset:auto 0 0;min-height:120px;padding:16px 19px 14px;background:linear-gradient(145deg,#fff9e9 0%,#e4d7b9 100%);border-top:4px solid #3a5557;box-shadow:0 -7px 22px #07171d50;color:#253b3d;line-height:1.55}.dialog:before{content:"LUCAMON  /  DIÁLOGO";display:block;font-size:10px;font-weight:950;letter-spacing:.15em;color:#a24d3c;margin-bottom:6px}.dialog p{font-weight:650;margin:0 0 12px;max-width:75ch}.options{gap:9px}.options button,.actions button{border:2px solid #8e7b54;background:linear-gradient(#fff4d3,#e0c48b);padding:8px 14px;border-radius:5px;color:#243b3d;box-shadow:0 3px 0 #7b6848;font-weight:850}.options button:hover,.actions button:hover{background:linear-gradient(#fff0ac,#e8bd57);transform:translateY(-2px);filter:none}.options button:active,.actions button:active{transform:translateY(1px);box-shadow:0 1px 0 #7b6848}
+.actions{margin-top:11px;padding:10px 12px;min-height:48px;border:1px solid #8d9a79;border-radius:7px;background:linear-gradient(100deg,#28484a,#1b343c);box-shadow:inset 0 1px #ffffff20,0 3px 0 #14292b; color:#f7efcf}.hint{font-size:12px;color:#e4e8d1;font-weight:650}.badges{padding:6px 9px;border:1px solid #c9b16f;border-radius:5px;background:#f5e4b7;color:#3a4d48;font-size:12px}
+button{transition:filter .12s,transform .12s,box-shadow .12s}button:focus-visible{outline:3px solid #e2a92e;outline-offset:3px}
+@media(max-width:600px){.frame{padding:6px}.top{align-items:flex-start}.top>div{gap:6px!important;flex-wrap:wrap}.speed-control{max-width:100%}.hud{left:7px;top:7px;padding:6px 8px;max-width:85%;font-size:12px}.hud:before{font-size:9px}.dialog{padding:11px 12px;min-height:100px}.dialog p{max-width:none}.options button{padding:7px 10px}.actions{align-items:flex-start;padding:9px;gap:8px}.hint{max-width:100%}}
+
+</style></head><body><div class="cover" id="lucamon-cover"><div class="cover-card"><div><div class="cover-kicker">UMA NOVA JORNADA COMEÇA</div><div class="cover-logo">LUCAMON</div><div class="cover-sub">EXPLORE · DESCUBRA · FAÇA AMIGOS</div></div><div class="cover-creature"><svg viewBox="0 0 180 155" aria-label="Criatura original azul e dourada" shape-rendering="crispEdges"><ellipse cx="90" cy="139" rx="48" ry="8" fill="#07171c" opacity=".45"/><path d="M47 64 L33 39 L57 48 L68 28 L88 45 L111 27 L120 49 L147 39 L135 68 L146 92 L132 120 L111 131 L72 131 L49 114 L37 88 Z" fill="#e8bd61" stroke="#152c38" stroke-width="7"/><path d="M55 68 L47 51 L63 58 L76 43 L88 58 L108 42 L117 60 L133 52 L124 75 L132 92 L118 113 L96 121 L75 115 L57 101 L50 84 Z" fill="#4aa5b2" stroke="#173845" stroke-width="5"/><path d="M59 87 L74 80 L83 92 L75 103 L61 101 Z" fill="#f6edcf"/><path d="M100 92 L109 80 L122 87 L121 101 L106 104 Z" fill="#f6edcf"/><rect x="68" y="88" width="8" height="11" fill="#152c38"/><rect x="109" y="88" width="8" height="11" fill="#152c38"/><rect x="84" y="108" width="17" height="5" fill="#173845"/><path d="M47 77 L24 67 L34 93 L51 98 M132 77 L156 66 L146 94 L129 98" fill="#e8bd61" stroke="#152c38" stroke-width="5"/><rect x="62" y="124" width="19" height="12" fill="#e8bd61" stroke="#152c38" stroke-width="4"/><rect x="104" y="124" width="19" height="12" fill="#e8bd61" stroke="#152c38" stroke-width="4"/></svg></div><div><div class="cover-actions"><button id="cover-start">COMEÇAR A JORNADA</button><button class="secondary" id="cover-continue">CONTINUAR</button></div><div class="cover-foot">AVENTURA 2D · PIXEL ART · UM MUNDO DE DESCOBERTAS</div></div></div></div><main class="frame"><header class="top"><b>Lucamon · Jornada em Kanto</b><div style="display:flex;align-items:center;gap:14px"><div class="speed-control" aria-label="Velocidade do personagem"><span>Velocidade:</span><button type="button" data-speed="slow" class="active">Lenta</button><button type="button" data-speed="normal">Normal</button><button type="button" data-speed="fast">Rápida</button></div><span id="status">Novo jogo</span></div></header><section class="screen"><canvas id="game" width="640" height="480"></canvas><div id="hud" class="hud"></div><div id="dialog" class="dialog"></div></section><footer class="actions"><span class="hint">Mover: setas / WASD · Interagir: Z / Enter · Menu: X / Esc</span><span class="badges" id="badges"></span></footer></main>
+<script>
+(()=>{'use strict';
+const c=document.querySelector('#game'),ctx=c.getContext('2d'),box=document.querySelector('#dialog'),hud=document.querySelector('#hud');
+const T=32,W=20,H=15;
+let movementDelay=230,lastMoveAt=0;
+document.querySelectorAll('[data-speed]').forEach(btn=>btn.addEventListener('click',()=>{movementDelay=({slow:230,normal:145,fast:75})[btn.dataset.speed];document.querySelectorAll('[data-speed]').forEach(b=>b.classList.toggle('active',b===btn));}));
+const moveData={'Investida':{type:'Normal',power:8},'Chicote de Vinha':{type:'Grama',power:13},'Brasa':{type:'Fogo',power:13},'Jato d’Água':{type:'Água',power:13},'Ataque especial':{type:'Normal',power:11},'Choque do Trovão':{type:'Elétrico',power:13},'Ataque de Asa':{type:'Voador',power:11},'Ferrão':{type:'Inseto',power:9},'Pedra Lançada':{type:'Pedra',power:12},'Psíquico':{type:'Psíquico',power:14},'Terremoto':{type:'Terra',power:15}};
+const typeChart={Fogo:{Grama:2,Inseto:2,Gelo:2,Água:.5,Pedra:.5,Fogo:.5},Água:{Fogo:2,Pedra:2,Terra:2,Grama:.5,Elétrico:.5,Água:.5},Grama:{Água:2,Pedra:2,Terra:2,Fogo:.5,Inseto:.5,Grama:.5,Veneno:.5,Voador:.5},Elétrico:{Água:2,Voador:2,Grama:.5,Elétrico:.5},Normal:{Pedra:.5},Voador:{Grama:2,Inseto:2,Elétrico:.5,Pedra:.5},Inseto:{Grama:2,Psíquico:2,Fogo:.5,Voador:.5,Pedra:.5},Pedra:{Fogo:2,Voador:2,Inseto:2},Terra:{Elétrico:2,Fogo:2,Pedra:2,Água:.5,Grama:.5},Lutador:{Normal:2,Pedra:2,Voador:.5,Psíquico:.5},Psíquico:{Lutador:2,Veneno:2},Veneno:{Grama:2,Veneno:.5,Pedra:.5},Gelo:{Grama:2,Voador:2,Dragão:2,Fogo:.5,Água:.5},Dragão:{Dragão:2}};
+const names=['Bulbasaur','Charmander','Squirtle'],types=['Grama','Fogo','Água'];
+const starts=[
+{name:names[0],type:types[0],hp:45,atk:11,moves:['Investida','Chicote de Vinha']},
+{name:names[1],type:types[1],hp:39,atk:13,moves:['Investida','Brasa']},
+{name:names[2],type:types[2],hp:44,atk:12,moves:['Investida','Jato d’Água']}
+];
+const maps={
+quarto:{name:'Quarto',kind:'room',south:'casa',npc:[{x:9,y:3,label:'Videogame',kind:'object'},{x:4,y:3,label:'PC',kind:'object'}]},
+casa:{name:'Casa da família',kind:'home',north:'quarto',npc:[{x:10,y:8,label:'Mãe'},{x:12,y:7,label:'Mesa',kind:'object'}]},
+pallet:{name:'Pallet Town',kind:'town',north:'route1',east:'lab',npc:[{x:10,y:6,label:'Vizinho'},{x:11,y:10,label:'Centro Pokémon'}]},
+lab:{name:'Laboratório do Professor Carvalho',kind:'lab',west:'pallet',npc:[{x:10,y:5,label:'Professor Carvalho'},{x:7,y:7,label:'Poké Bola de Bulbasaur',kind:'starter',starter:0},{x:9,y:7,label:'Poké Bola de Charmander',kind:'starter',starter:1},{x:11,y:7,label:'Poké Bola de Squirtle',kind:'starter',starter:2},{x:14,y:7,label:'Gary'}]},
+route1:{name:'Route 1',kind:'route',south:'pallet',north:'viridian',npc:[{x:8,y:7,label:'Grama alta'}]},
+viridian:{name:'Viridian City',kind:'town',south:'route1',north:'route2',east:'viridianGym',npc:[{x:6,y:8,label:'Ginásio'},{x:10,y:5,label:'Loja Pokémon'},{x:14,y:8,label:'Centro Pokémon'}]},
+forest:{name:'Viridian Forest',kind:'forest',south:'route2',north:'pewter',npc:[{x:7,y:7,label:'Grama alta'},{x:10,y:7,label:'Árvore',kind:'object'},{x:13,y:5,label:'Treinador'}]},
+pewter:{name:'Pewter City',kind:'town',south:'forest',north:'route3',npc:[{x:6,y:8,label:'Ginásio'},{x:8,y:5,label:'Loja Pokémon'},{x:11,y:10,label:'Centro Pokémon'}]},
+moon:{name:'Monte Lua',kind:'cave',south:'route3',north:'cerulean',npc:[{x:10,y:7,label:'Fóssil'}]},
+cerulean:{name:'Cerulean City',kind:'town',south:'moon',north:'nuggetBridge',east:'route9',west:'route5',npc:[{x:6,y:8,label:'Ginásio'},{x:8,y:5,label:'Loja Pokémon'},{x:11,y:10,label:'Centro Pokémon'}]},
+bill:{name:'Casa de Bill',kind:'home',south:'route25',npc:[{x:10,y:7,label:'Bill'}]},
+vermilion:{name:'Vermilion City',kind:'town',north:'route6',south:'surgeGym',east:'ssAnne',west:'route11',npc:[{x:6,y:8,label:'Ginásio'},{x:8,y:5,label:'Loja Pokémon'},{x:11,y:10,label:'Centro Pokémon'}]},
+lavender:{name:'Lavender Town',kind:'town',north:'rockTunnel',west:'route8',east:'pokemonTower',npc:[{x:10,y:5,label:'Torre Pokémon'},{x:8,y:5,label:'Loja Pokémon'},{x:11,y:10,label:'Centro Pokémon'}]},
+celadon:{name:'Celadon City',kind:'town',north:'route7',south:'route8',west:'rocketHideout',npc:[{x:6,y:8,label:'Ginásio'},{x:14,y:8,label:'Game Corner'},{x:8,y:5,label:'Loja Pokémon'},{x:11,y:10,label:'Centro Pokémon'}]},
+saffron:{name:'Saffron City',kind:'town',south:'route7',north:'route12',east:'silphCo',npc:[{x:6,y:8,label:'Ginásio'},{x:14,y:8,label:'Silph Co.'},{x:8,y:5,label:'Loja Pokémon'},{x:11,y:10,label:'Centro Pokémon'}]},
+fuchsia:{name:'Fuchsia City',kind:'town',west:'route12',south:'cinnabar',east:'safariZone',npc:[{x:6,y:8,label:'Ginásio'},{x:14,y:8,label:'Safari Zone'},{x:8,y:5,label:'Loja Pokémon'},{x:11,y:10,label:'Centro Pokémon'}]},
+cinnabar:{name:'Cinnabar Island',kind:'town',north:'fuchsia',west:'viridianGym',east:'pokemonMansion',npc:[{x:6,y:8,label:'Ginásio'},{x:14,y:8,label:'Mansão Pokémon'},{x:8,y:5,label:'Loja Pokémon'},{x:11,y:10,label:'Centro Pokémon'}]},
+viridianGym:{name:'Ginásio de Viridian',kind:'gym',west:'viridian',east:'cinnabar',north:'victory',npc:[{x:6,y:8,label:'Treinador do Ginásio'},{x:10,y:5,label:'Giovanni'}]},
+victory:{name:'Victory Road',kind:'cave',south:'viridianGym',east:'league',npc:[{x:6,y:6,label:'Treinador'},{x:10,y:7,label:'Pedra',kind:'object'}]},
+league:{name:'Liga Pokémon',kind:'gym',west:'victory',south:'sevii',npc:[{x:10,y:5,label:'Elite Four e Gary'}]},
+route2:{name:'Route 2',kind:'route',south:'viridian',north:'forest',east:'diglettCave',npc:[{x:8,y:7,label:'Grama alta'},{x:13,y:6,label:'Treinador'}]},
+route3:{name:'Route 3',kind:'route',south:'pewter',north:'moon',npc:[{x:8,y:7,label:'Treinador'},{x:13,y:6,label:'Treinador'}]},
+nuggetBridge:{name:'Nugget Bridge',kind:'route',south:'cerulean',north:'route25',npc:[{x:5,y:7,label:'Treinador'},{x:8,y:7,label:'Treinador'},{x:11,y:7,label:'Equipe Rocket'},{x:14,y:7,label:'Treinador'}]},
+route25:{name:'Route 25',kind:'route',south:'nuggetBridge',north:'bill',npc:[{x:8,y:7,label:'Treinador'},{x:13,y:6,label:'Treinador'}]},
+route5:{name:'Route 5',kind:'route',east:'cerulean',south:'underground',npc:[{x:10,y:7,label:'Entrada subterrânea'}]},
+underground:{name:'Caminho subterrâneo',kind:'cave',north:'route5',south:'route6',npc:[{x:10,y:7,label:'Treinador'}]},
+route6:{name:'Route 6',kind:'route',north:'underground',south:'vermilion',npc:[{x:8,y:7,label:'Treinador'},{x:13,y:6,label:'Treinador'}]},
+pewterGym:{name:'Ginásio de Pewter',kind:'gym',south:'pewter',npc:[{x:6,y:8,label:'Treinador do Ginásio'},{x:10,y:5,label:'Brock'}]},
+ceruleanGym:{name:'Ginásio de Cerulean',kind:'gym',south:'cerulean',npc:[{x:6,y:8,label:'Treinador do Ginásio'},{x:10,y:5,label:'Misty'}]},
+celadonGym:{name:'Ginásio de Celadon',kind:'gym',south:'celadon',npc:[{x:6,y:8,label:'Treinador do Ginásio'},{x:10,y:5,label:'Erika'}]},
+saffronGym:{name:'Ginásio de Saffron',kind:'gym',south:'saffron',npc:[{x:6,y:8,label:'Treinador do Ginásio'},{x:10,y:5,label:'Sabrina'}]},
+fuchsiaGym:{name:'Ginásio de Fuchsia',kind:'gym',south:'fuchsia',npc:[{x:6,y:8,label:'Treinador do Ginásio'},{x:10,y:5,label:'Koga'}]},
+cinnabarGym:{name:'Ginásio de Cinnabar',kind:'gym',south:'cinnabar',npc:[{x:6,y:8,label:'Treinador do Ginásio'},{x:10,y:5,label:'Blaine'}]},
+pokemonCenter:{name:'Centro Pokémon',kind:'building',npc:[{x:10,y:5,label:'Enfermeira'},{x:15,y:7,label:'Computador',kind:'object'},{x:10,y:13,label:'Saída',kind:'object'}]},
+pokemonShop:{name:'Loja Pokémon',kind:'building',npc:[{x:10,y:5,label:'Atendente'},{x:10,y:13,label:'Saída',kind:'object'}]},
+surgeGym:{name:'Ginásio de Vermilion',kind:'gym',north:'vermilion',npc:[{x:7,y:8,label:'Interruptor 1',kind:'object'},{x:13,y:8,label:'Interruptor 2',kind:'object'},{x:10,y:5,label:'Lt. Surge'},{x:5,y:7,label:'Treinador do Ginásio'}]},
+ssAnne:{name:'S.S. Anne — Convés',kind:'ship',west:'vermilion',npc:[{x:14,y:7,label:'Gary no navio'},{x:6,y:8,label:'Treinador'},{x:9,y:5,label:'Cabines',kind:'object'},{x:12,y:10,label:'Escadas',kind:'object'}]},
+ssAnneCabins:{name:'S.S. Anne — Cabines',kind:'ship',npc:[{x:6,y:6,label:'Treinador'},{x:14,y:6,label:'Treinador'},{x:10,y:5,label:'Baú do navio',kind:'object'},{x:10,y:11,label:'Voltar ao convés',kind:'object'}]},
+ssAnneUpper:{name:'S.S. Anne — Convés superior',kind:'ship',npc:[{x:10,y:5,label:'Capitão'},{x:6,y:8,label:'Treinador'},{x:10,y:11,label:'Escada de volta',kind:'object'}]},
+route11:{name:'Route 11',kind:'route',east:'vermilion',west:'diglettCave',npc:[{x:10,y:7,label:'Treinador'}]},
+diglettCave:{name:'Diglett’s Cave',kind:'cave',west:'route2',east:'route11',npc:[{x:10,y:7,label:'Assistente'}]},
+route9:{name:'Route 9',kind:'route',west:'cerulean',south:'route10',npc:[{x:8,y:7,label:'Treinador'},{x:13,y:6,label:'Treinador'}]},
+route10:{name:'Route 10',kind:'route',north:'route9',south:'rockTunnel',npc:[{x:10,y:7,label:'Centro Pokémon'}]},
+rockTunnel:{name:'Rock Tunnel',kind:'cave',north:'route10',south:'lavender',npc:[{x:8,y:7,label:'Treinador'}]},
+pokemonTower:{name:'Torre Pokémon',kind:'cave',west:'lavender',npc:[{x:7,y:7,label:'Equipe Rocket'},{x:10,y:6,label:'Mãe Marowak'},{x:13,y:6,label:'Mr. Fuji'}]},
+route8:{name:'Route 8',kind:'route',north:'celadon',east:'lavender',npc:[{x:10,y:7,label:'Treinador'}]},
+route7:{name:'Route 7',kind:'route',south:'celadon',north:'saffron',npc:[{x:10,y:7,label:'Treinador'}]},
+rocketHideout:{name:'Esconderijo Rocket — B1F',kind:'cave',east:'celadon',npc:[{x:7,y:7,label:'Recruta Rocket 1'},{x:13,y:8,label:'Painel Rocket',kind:'object'}]},
+rocketFloor2:{name:'Esconderijo Rocket — B2F',kind:'cave',npc:[{x:6,y:7,label:'Recruta Rocket 2'},{x:13,y:7,label:'Painel Rocket',kind:'object'},{x:10,y:11,label:'Painel de Saída',kind:'object'}]},
+rocketFloor3:{name:'Esconderijo Rocket — B3F',kind:'cave',npc:[{x:10,y:5,label:'Giovanni Rocket'},{x:10,y:11,label:'Painel de Saída',kind:'object'}]},
+silphCo:{name:'Silph Co. — 1º andar',kind:'lab',west:'saffron',npc:[{x:7,y:7,label:'Recruta Silph 1'},{x:13,y:8,label:'Painel Silph',kind:'object'}]},
+silphFloor2:{name:'Silph Co. — 2º andar',kind:'lab',npc:[{x:6,y:7,label:'Recruta Silph 2'},{x:14,y:6,label:'Cartão de Acesso',kind:'object'},{x:13,y:8,label:'Painel Silph',kind:'object'},{x:10,y:11,label:'Painel de Saída',kind:'object'}]},
+silphFloor3:{name:'Silph Co. — Andar Executivo',kind:'lab',npc:[{x:10,y:5,label:'Funcionário Silph'},{x:10,y:7,label:'Giovanni Silph'},{x:10,y:11,label:'Painel de Saída',kind:'object'}]},
+route12:{name:'Route 12',kind:'route',south:'saffron',east:'fuchsia',npc:[{x:8,y:7,label:'Snorlax'},{x:13,y:6,label:'Treinador'}]},
+safariZone:{name:'Safari Zone — Entrada',kind:'forest',west:'fuchsia',east:'safariEast',npc:[{x:14,y:6,label:'Administrador'}]},
+safariEast:{name:'Safari Zone — Área Leste',kind:'forest',west:'safariZone',north:'safariNorth',east:'safariDeep',npc:[{x:8,y:7,label:'Treinador'}]},
+safariNorth:{name:'Safari Zone — Área Norte',kind:'forest',south:'safariEast',npc:[{x:7,y:6,label:'Casa secreta'},{x:13,y:7,label:'Treinador'}]},
+safariDeep:{name:'Safari Zone — Área Remota',kind:'forest',west:'safariEast',npc:[{x:10,y:8,label:'Dente de Ouro'},{x:14,y:6,label:'Treinador'}]},
+pokemonMansion:{name:'Mansão Pokémon',kind:'cave',west:'cinnabar',npc:[{x:7,y:6,label:'Chave do ginásio'},{x:13,y:7,label:'Pesquisador'}]},sevii:{name:'Ilhas Sevii',kind:'island',north:'league',east:'seviiRoute',npc:[{x:10,y:6,label:'Celio'}]},
+seviiRoute:{name:'Sevii — Ilha Um',kind:'forest',west:'sevii',north:'seviiCave',npc:[{x:7,y:7,label:'Equipe Rocket'},{x:13,y:6,label:'Treinador'}]},
+seviiCave:{name:'Caverna das Ilhas',kind:'cave',south:'seviiRoute',npc:[{x:7,y:6,label:'Rocket das Ilhas'},{x:10,y:8,label:'Ruby'},{x:13,y:6,label:'Sapphire'}]}
+};
+const newState=()=>({scene:'quarto',x:9,y:10,starter:null,party:[],badges:0,badgeNames:[],defeatedGyms:[],mission:0,pokedex:[],money:300,items:{pokeball:0,potion:1,safariBall:0},returnTo:'pallet',seen:{},rival:false,champion:false,package:false,surgeSwitch1:false,surgeDoorOpen:false,gymChallenges:{},pokedexObtained:false,billHelped:false,ticket:false,cut:false,shipRival:false,ssAnneDeparted:false,shipTreasure:false,rocketDiscovered:false,rocketCleared:false,rocketGuard1:false,rocketGuard2:false,silphScope:false,silphRescued:false,silphGuard1:false,silphGuard2:false,silphKeycard:false,pokeFlute:false,surf:false,goldTeeth:false,strength:false,mansionKey:false,snorlaxAwake:false,flash:false,eliteIndex:0,safariUsed:false,towerRocketCleared:false,marowakResolved:false,clearedTree:false,rockMoved:false,seviiQuest:false,ruby:false,sapphire:false,rocketIslandCleared:false,seviiComplete:false,dialogueDone:{},pc:[],fossil:null});
+let g=newState(),battle=null,menu=false,transitionLock=false;
+function hasSave(){try{return !!(localStorage.getItem('jornadaKantoSave')||localStorage.getItem('jornadaInicialSaveV1'))}catch(e){return false}}
+function save(){try{localStorage.setItem('jornadaKantoSave',JSON.stringify(g));document.querySelector('#status').textContent='Salvo'}catch(e){}}
+function load(){try{let raw=localStorage.getItem('jornadaKantoSave')||localStorage.getItem('jornadaInicialSaveV1'),s=JSON.parse(raw);if(s&&s.scene){if(s.scene==='rota1')s.scene='route1';if(typeof s.pokedexObtained==='undefined')s.pokedexObtained=s.mission>=5;if(maps[s.scene]){g={...newState(),...s};g.items={...newState().items,...(s.items||{})};g.party=Array.isArray(s.party)?s.party:[];g.pc=Array.isArray(s.pc)?s.pc:[];g.pokedex=Array.isArray(s.pokedex)?s.pokedex:[];g.seen=s.seen||{};let order=['Brock','Misty','Lt. Surge','Erika','Sabrina','Koga','Blaine','Giovanni'];g.defeatedGyms=Array.isArray(s.defeatedGyms)?s.defeatedGyms:order.slice(0,Math.min(8,g.badges));let badge={Brock:'Boulder Badge',Misty:'Cascade Badge','Lt. Surge':'Thunder Badge',Erika:'Rainbow Badge',Koga:'Soul Badge',Sabrina:'Marsh Badge',Blaine:'Volcano Badge',Giovanni:'Earth Badge'};g.badgeNames=Array.isArray(s.badgeNames)?s.badgeNames:g.defeatedGyms.map(n=>badge[n]).filter(Boolean);g.badges=g.defeatedGyms.length}}}catch(e){}}
+function close(){box.classList.remove('show');box.innerHTML='';menu=false}
+function escapeHtml(value){return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function say(text,choices=[]){box.innerHTML='<p></p><div class="options"></div>';box.querySelector('p').textContent=text;const row=box.querySelector('.options');choices.forEach(([label,fn])=>{let b=document.createElement('button');b.textContent=label;b.onclick=()=>{close();fn()};row.append(b)});if(!choices.length){let b=document.createElement('button');b.textContent='Continuar';b.onclick=close;row.append(b)}box.classList.add('show');row.querySelector('button')?.focus()}
+function objective(){if(!g.starter)return 'Vá ao laboratório e escolha seu Pokémon inicial.';if(!g.rival)return 'Vença a batalha tutorial contra Gary em Pallet Town.';if(!g.pokedexObtained)return 'Visite a loja de Viridian e entregue o pacote ao Professor Carvalho.';if(g.badges<1)return 'Atravesse a Viridian Forest, chegue a Pewter City e desafie Brock.';if(g.badges>=1&&!g.ticket)return 'Atravesse a Ponte Nugget e encontre Bill na Route 25.';if(g.badges>=1&&!g.shipRival)return 'Explore o S.S. Anne e enfrente Gary no convés.';if(g.badges>=1&&!g.cut)return 'Depois de vencer Gary, procure o capitão no andar superior do navio.';if(g.badges<2)return 'Volte a Cerulean City e conquiste a Cascade Badge de Misty.';if(g.badges>=2&&!g.flash)return 'Converse com o assistente na caverna de Diglett e obtenha Flash.';if(g.badges<3)return 'Desafie Lt. Surge em Vermilion e conquiste a Thunder Badge.';if(g.badges>=3&&!g.rocketDiscovered)return 'Investigue o Game Corner em Celadon e descubra a passagem secreta.';if(g.badges>=3&&!g.silphScope)return 'Atravesse os andares do Esconderijo Rocket e encontre Giovanni.';if(g.badges>=3&&(!g.towerRocketCleared||!g.marowakResolved||!g.pokeFlute))return 'Volte à Torre Pokémon, ajude o espírito de Marowak e resgate Mr. Fuji.';if(g.badges<4)return 'Explore Celadon City e conquiste a Rainbow Badge de Erika.';if(g.badges>=4&&!g.silphRescued)return 'Entre na Silph Co. em Saffron, encontre o cartão de acesso e derrote Giovanni.';if(g.badges<5)return 'Desafie Sabrina no ginásio de Saffron City.';if(g.badges>=5&&(!g.surf||!g.goldTeeth||!g.strength))return 'Explore as áreas da Safari Zone, encontre Surf e os Gold Teeth.';if(g.badges<6)return 'Desafie Koga em Fuchsia City.';if(g.badges>=6&&!g.mansionKey)return 'Encontre a chave do ginásio na Mansão Pokémon de Cinnabar.';if(g.badges<7)return 'Desafie Blaine e conquiste a Volcano Badge.';if(g.badges<8)return 'Volte ao ginásio de Viridian e derrote Giovanni.';if(g.eliteIndex<4)return 'Atravesse Victory Road e vença a Elite Four.';if(!g.champion)return 'Desafie Gary, o Campeão da Liga Pokémon.';if(!g.seviiQuest)return 'Converse com Celio nas Ilhas Sevii.';if(!g.ruby||!g.sapphire)return 'Explore as ilhas e encontre a Ruby e a Sapphire.';if(!g.seviiComplete)return 'Volte a Celio e conclua a missão das Ilhas Sevii.';return 'Explore Kanto e as Ilhas Sevii, capture Pokémon e complete sua Pokédex.'}
+function enter(scene,from){let gates={route2:[g.mission<5,'O caminho ao norte está fechado. Entregue o pacote ao Professor Carvalho primeiro.'],route3:[g.badges<1,'A rota adiante exige a Insígnia da Pedra.'],moon:[g.badges<1,'Brock recomenda que você volte depois de conquistar sua primeira insígnia.'],ssAnne:[g.ssAnneDeparted||!g.ticket,g.ssAnneDeparted?'O S.S. Anne já partiu.':'O navio exige um ingresso. Bill pode ajudar.'],surgeGym:[!g.cut,'Use Cut para abrir a entrada do ginásio.'],route11:[!g.cut,'Uma árvore bloqueia esta passagem. Você precisa da técnica Cut.'],diglettCave:[!g.cut,'A passagem está bloqueada até você obter Cut.'],route9:[g.badges<3,'Os guardas liberam esta rota após a terceira insígnia.'],route10:[g.badges<3,'Os guardas liberam esta rota após a terceira insígnia.'],pokemonTower:[!g.silphScope,'Os fantasmas não podem ser identificados sem o Silph Scope.'],rocketHideout:[!g.rocketDiscovered,'A entrada secreta ainda não foi descoberta. Investigue o Game Corner.'],silphCo:[!g.silphScope,'A Equipe Rocket ainda não revelou o Silph Scope.'],route12:[!g.pokeFlute,'Um Snorlax adormecido bloqueia o caminho.'],safariZone:[g.badges<4,'A entrada da Safari Zone exige quatro insígnias.'],cinnabar:[!g.surf,'Você precisa de Surf para atravessar até Cinnabar Island.'],viridianGym:[g.badges<7,'O último ginásio só abre após sete insígnias.'],victory:[g.badges<8,'Apresente as oito insígnias para seguir pela Victory Road.'],league:[g.badges<8,'A Liga Pokémon exige as oito insígnias.'],sevii:[!g.champion,'As Ilhas Sevii ficam disponíveis após vencer a Liga Pokémon.']};let gate=gates[scene];if(gate&&gate[0]){say(gate[1]);return}if(scene==='fuchsia'&&from==='route12'&&!g.snorlaxAwake){say('Snorlax bloqueia a passagem. Use a Poké Flute e vença o encontro para seguir.');return}if(scene==='pokemonCenter'||scene==='pokemonShop')g.returnTo=from||'pallet';g.scene=scene;if(scene==='viridian'&&g.mission===3)g.mission=4;if(scene==='safariZone'&&!g.safariUsed){g.items.safariBall=30;g.safariUsed=true;}if(scene==='quarto'&&from==='casa'){g.x=16;g.y=3}else if(scene==='casa'&&from==='quarto'){g.x=16;g.y=3}else if(scene==='casa'&&from==='pallet'){g.x=8;g.y=12}else if(scene==='pallet'&&from==='casa'){g.x=6;g.y=7}else{g.x=scene==='lab'?10:scene==='pallet'&&from==='lab'?14:10;g.y=scene==='quarto'?10:scene==='lab'?12:scene==='pallet'&&from==='lab'?11:12}transitionLock=true;setTimeout(()=>transitionLock=false,250);save();draw()}
+function tile(x,y){let m=maps[g.scene];if(x<0||y<0||x>=W||y>=H)return '#';if(g.scene==='casa'){if(y===14&&x>=8&&x<=9)return 'exit';if(x===0||x===19||y===0||y===14)return '#';return 'floor'}if(g.scene==='quarto'){if(x===0||x===19||y===0||y===14)return '#';return 'floor'}if(g.scene==='forest'&&x===10&&y===7&&!g.clearedTree)return 'tree';if(g.scene==='victory'&&x===10&&y===7&&!g.rockMoved)return 'rock';if(y===0&&m.north&&(g.scene!=='casa'||(x>=15&&x<=17)))return 'exit';if(y===H-1&&m.south&&(g.scene==='lab'?(x>=9&&x<=10):(g.scene!=='quarto'||(x>=15&&x<=17))))return 'exit';if(x===0&&m.west&&((g.scene==='pallet'&&y>=11&&y<=12)||(g.scene!=='pallet'&&y>=6&&y<=8)))return 'exit';if(x===W-1&&m.east&&g.scene!=='pallet'&&(g.scene!=='casa'||(y>=11&&y<=13))&&((g.scene==='casa'&&y>=11&&y<=13)||(g.scene!=='casa'&&y>=6&&y<=8)))return 'exit';if(m.kind==='gym'||m.kind==='ship'||m.kind==='building')return (x===0||x===W-1||y===0||y===H-1)?'#':'floor';if(m.kind==='room'||m.kind==='home'||m.kind==='lab'){if(y===0||x===0||x===W-1||y===H-1)return '#';return 'floor'}if(m.kind==='cave')return (x===0||x===W-1||y===0||y===H-1)?'#':'cave';if(m.kind==='forest'&&((x>2&&x<5&&y>2&&y<12)||(x>14&&x<18&&y>1&&y<10)))return 'tree';if(m.kind==='forest'&&x>6&&x<14&&y>3&&y<12)return 'grass';if(m.kind==='route'&&((x<4||x>15)&&y>2&&y<12))return 'grass';if(m.kind==='town'&&((x>3&&x<8&&y>3&&y<7)||(x>12&&x<17&&y>7&&y<11)))return 'building';return 'ground'}
+function rect(x,y,w,h,col){ctx.fillStyle=col;ctx.fillRect(x,y,w,h)}
+function drawTile(x,y,t){
+ const px=x*T,py=y*T,seed=(x*37+y*71+x*y*13)%97;
+ if(t==='floor'){
+  if(g.scene==='quarto'||g.scene==='casa'){
+   // Piso quadriculado de ladrilhos pequenos, sem pixels aleatórios ou manchas.
+   rect(px,py,T,T,'#9f8745');
+   for(let sy=0;sy<T;sy+=16)for(let sx=0;sx<T;sx+=16){
+    const light=((x*2+sx/16+y*2+sy/16)%2===0);
+    const fc=light?'#dfca78':'#d2bb68';
+    rect(px+sx+1,py+sy+1,14,14,fc);
+    rect(px+sx+1,py+sy+1,14,2,light?'#ebd993':'#e0cb80');
+    rect(px+sx+1,py+sy+1,2,14,light?'#ebd993':'#e0cb80');
+    rect(px+sx+14,py+sy+2,1,13,'#b49b51');
+    rect(px+sx+2,py+sy+14,13,1,'#b49b51');
+   }
+  }else{
+   rect(px,py,T,T,'#986b45');rect(px+1,py+1,T-2,T-2,'#c18a56');
+   rect(px+2,py+3,28,2,'#d7a66b');rect(px+1,py+15,30,2,'#8f603d');rect(px+2,py+17,28,10,'#bd8551');rect(px+1,py+28,30,2,'#8d5d3c');
+   rect(px+15,py+2,2,13,'#a66e43');rect(px+7,py+17,2,11,'#a66e43');rect(px+2,py+2,28,1,'#d8a16b');rect(px+2,py+30,28,1,'#855632');if(seed%4===0)rect(px+22,py+8,4,2,'#d9a36a');if(seed%6===0)rect(px+4,py+21,6,2,'#a87347');
+  }
+ }else if(t==='ground'){
+  rect(px,py,T,T,'#659f53');rect(px+1,py+1,T-2,T-2,'#80b967');rect(px+1,py+1,T-2,2,'#91c878');rect(px+1,py+T-3,T-2,2,'#60964f');
+  if(seed%3===0){rect(px+5,py+22,3,2,'#5da34f');rect(px+7,py+20,2,2,'#6cad56')}
+  if(seed%5===0){rect(px+23,py+7,2,3,'#91cc70');rect(px+25,py+9,2,2,'#5fa451')}
+  if(seed%11===0){rect(px+14,py+14,2,2,'#f3df83');rect(px+13,py+13,1,1,'#fff0b0')}
+  if(seed%7===0){rect(px+3,py+5,2,1,'#609f50');rect(px+25,py+27,3,1,'#68aa55')}
+  if(seed%4===1){rect(px+7,py+8,1,4,'#639f51');rect(px+9,py+6,1,3,'#91c878')}if(seed%9===2){rect(px+23,py+20,2,2,'#6aa755');rect(px+24,py+19,1,1,'#a1d081')}
+ }else if(t==='exit'){
+  rect(px,py,T,T,'#77b45f');rect(px+3,py,T-6,T,'#d7bd72');rect(px+6,py+1,T-12,T-2,'#c7a85d');
+  rect(px+8,py+4,16,24,'#b18b49');rect(px+10,py+6,12,20,'#e2ce8a');rect(px+11,py+8,10,2,'#f0dfa4');
+ }else if(t==='grass'){
+  rect(px,py,T,T,'#4e9149');rect(px+1,py+1,30,30,'#65ad53');rect(px+2,py+2,28,28,'#70b75a');rect(px+1,py+1,30,2,'#86c96a');
+  for(let i=0;i<5;i++){let gx=2+((seed+i*7)%26),gy=7+((seed+i*11)%19);rect(px+gx,py+gy,2,7,'#347d41');rect(px+gx+2,py+gy-3,3,5,'#498f45');rect(px+gx-2,py+gy+2,3,4,'#3d8743')}
+  rect(px+4,py+24,4,2,'#80c66a');rect(px+20,py+5,4,2,'#85c96d');
+ }else if(t==='rock'){
+  rect(px,py,T,T,'#705b48');rect(px+4,py+9,23,18,'#786451');rect(px+7,py+6,16,5,'#a08a6e');rect(px+10,py+4,10,4,'#b19b7d');
+  rect(px+8,py+13,5,3,'#b7a184');rect(px+17,py+18,7,2,'#665341');rect(px+5,py+26,20,2,'#574839');
+ }else if(t==='tree'){
+  rect(px,py,T,T,'#5a9c56');rect(px+12,py+17,9,15,'#75523b');rect(px+14,py+19,3,10,'#926846');
+  rect(px+1,py+8,30,19,'#244e36');rect(px+4,py+4,24,16,'#2f6a40');rect(px+2,py+12,13,13,'#3c8048');rect(px+17,py+10,13,14,'#3a7a45');
+  rect(px+5,py+6,7,4,'#5aa45b');rect(px+13,py+4,7,4,'#4b9652');rect(px+21,py+11,6,4,'#58a45b');rect(px+7,py+16,5,4,'#4e9652');rect(px+17,py+18,6,3,'#2e683c');rect(px+13,py+10,4,3,'#72b66b');
+  rect(px+2,py+27,28,3,'#477c43');rect(px+4,py+9,2,7,'#73b96a');
+ }else if(t==='building'){
+  // Fachadas variam por cidade: a mesma linguagem de pixel art, mas identidade própria.
+  const facade={viridian:['#b5b99a','#527e65','#80a98a','#d0d9b8'],pewter:['#b9b3a5','#777d83','#9babb0','#d8d3c4'],cerulean:['#b9c9c7','#397d91','#75b4c0','#d8e8dc'],vermilion:['#d9b58c','#b35d45','#d18b67','#f0d0a4'],lavender:['#c7b2c7','#79627f','#a48aa5','#e0cce0'],celadon:['#b8c7a0','#56845b','#88ae72','#d6e3bd'],saffron:['#d7c38e','#b68a42','#d5ac5d','#f0dfab'],fuchsia:['#d4b0a0','#ad657d','#d18ca0','#f1c8c1'],cinnabar:['#d7a38b','#b84e3f','#d77b61','#f1c3a5'],pallet:['#d7c49e','#b75c4b','#d68c69','#f1dfb7']};
+  const pal=facade[g.scene]||facade.pallet;
+  rect(px,py,T,T,pal[0]);rect(px+1,py+2,30,27,pal[1]);rect(px+3,py+4,26,18,pal[2]);
+  rect(px+5,py+7,22,8,'#86b8bd');rect(px+6,py+8,20,2,'#c3e0d9');rect(px+11,py+16,10,12,'#6d483c');
+  rect(px+13,py+18,6,2,'#bd8b56');rect(px+2,py+27,28,3,'#694539');rect(px+1,py+2,30,2,pal[3]);
+  rect(px+3,py+23,26,2,pal[0]);rect(px+4,py+5,2,17,pal[3]);rect(px+26,py+5,2,17,pal[1]);
+ }else if(t==='water'){
+  rect(px,py,T,T,'#347fa9');rect(px+1,py+1,30,30,'#438fb6');rect(px+2,py+2,28,7,'#4fa2c2');rect(px+2,py+10,28,20,'#3f8db4');
+  rect(px+3,py+7,12,2,'#b2e1d9');rect(px+6,py+9,8,1,'#d8eee0');rect(px+17,py+21,11,2,'#a3d9d5');rect(px+20,py+19,7,1,'#bde6df');rect(px+7,py+17,5,1,'#72bed0');
+  rect(px+20,py+5,6,1,'#75c0d1');rect(px+2,py+28,9,1,'#367fa9');rect(px+15,py+13,2,2,'#5cabc7');
+ }else if(t==='#'){
+  if(g.scene==='quarto'||g.scene==='casa'){
+   // Moldura de madeira escura e reboco quente, como a arquitetura interna de Kanto.
+   rect(px,py,T,T,'#755039');rect(px+2,py+2,T-4,T-4,'#d9c49a');
+   if(y===0){rect(px+2,py+2,T-4,5,'#9b704b');rect(px+2,py+10,T-4,2,'#be9564');rect(px+2,py+23,T-4,2,'#b18a5b');}
+   else{rect(px+3,py+4,T-6,2,'#e7d5ae');rect(px+3,py+15,T-6,2,'#c0a57c');rect(px+3,py+26,T-6,2,'#b08d64');rect(px+8,py+5,2,8,'#c5a77b');rect(px+22,py+18,2,6,'#c5a77b');}
+  }else{
+   rect(px,py,T,T,'#477d4d');rect(px+2,py+2,T-4,T-4,'#315f43');rect(px+4,py+4,7,2,'#3e7047');rect(px+18,py+22,8,2,'#3e7047');
+  }
+ }else{
+  rect(px,py,T,T,'#705b48');rect(px+3,py+4,9,6,'#856d56');rect(px+19,py+16,10,8,'#604f43');rect(px+12,py+9,4,3,'#9a8061');rect(px+5,py+26,6,2,'#806953');
+ }
+ // Acabamento por tile: pequenas variações desenhadas na grade dão textura sem ruído excessivo.
+ if(t==='ground'){
+  rect(px+4,py+5,7,2,'#8bc475');rect(px+5,py+6,3,2,'#75ad60');
+  if(seed%4===0){rect(px+20,py+23,5,2,'#639d53');rect(px+22,py+22,2,2,'#8bc576');}
+  if(seed%13===0){rect(px+13,py+17,3,3,'#e5d27b');rect(px+14,py+16,1,1,'#fff0ad');}
+ }else if(t==='grass'){
+  rect(px+4,py+5,2,7,'#8bcb6c');rect(px+6,py+7,2,5,'#6bb45a');rect(px+24,py+19,2,6,'#2f713c');
+  if(seed%3===0){rect(px+14,py+12,3,3,'#e5d77d');rect(px+15,py+11,1,1,'#fff0b5');}
+ }else if(t==='water'){
+  rect(px+4,py+13,7,1,'#c4e8dd');rect(px+7,py+14,4,1,'#70b8ce');rect(px+19,py+26,8,1,'#8bd0d9');
+ }else if(t==='building'){
+  rect(px+3,py+3,26,1,'#f0c58a');rect(px+4,py+24,24,2,'#bd765b');
+  rect(px+7,py+8,18,1,'#b9d7d2');rect(px+7,py+14,18,1,'#729b9d');
+ }else if(t==='#' && g.scene!=='quarto' && g.scene!=='casa'){
+  if(seed%3===0)rect(px+7,py+7,5,2,'#47744b');
+ }
+ // Detalhe ambiental sutil e determinístico: nada de ruído aleatório piscando.
+ if(t==='ground' && (seed%8===1 || seed%11===4)){
+   const flowers=['#f2e4a0','#f0c3cb','#e7e9dc']; const fc=flowers[(x+y)%flowers.length];
+   rect(px+8+(seed%9),py+9+(seed%7),3,3,fc);rect(px+9+(seed%9),py+12+(seed%7),1,3,'#43844b');
+ }
+ if(t==='ground' && seed%10===3){rect(px+22,py+20,5,3,'#6a9b57');rect(px+23,py+19,3,2,'#9ac879');}
+ if(t==='cave' && seed%5===2){rect(px+5,py+8,6,2,'#88745e');rect(px+7,py+10,2,3,'#51483e');}
+ if(t==='floor' && g.scene!=='quarto' && g.scene!=='casa' && seed%7===2){rect(px+5,py+6,20,1,'rgba(255,255,255,.12)');rect(px+5,py+7,20,1,'rgba(60,40,25,.08)');}
+}
+function actor(x,y,color='#d64c42'){
+ const px=x*T,py=y*T;
+ // Personagens um pouco maiores para ficarem proporcionais ao cenário.
+ // O ponto dos pés permanece alinhado à grade de movimento.
+ ctx.save();ctx.translate(px+T/2,py+T);ctx.scale(1.2,1.2);ctx.translate(-(px+T/2),-(py+T));
+ // Personagem pixel-art inspirado nos RPGs clássicos de GBA: silhueta limpa,
+ // contorno escuro, roupa em camadas, rosto e acessórios legíveis.
+ const npcPalette={
+  '#7450a0':{hair:'#423047',skin:'#edbd91',pants:'#48405e',shade:'#533b79'},
+  '#508b43':{hair:'#6a472b',skin:'#e9b68b',pants:'#566346',shade:'#356d39'},
+  '#3b7185':{hair:'#563d30',skin:'#d99c72',pants:'#384f62',shade:'#2b596b'},
+  '#d64c42':{hair:'#593b2c',skin:'#f2c69a',pants:'#34485d',shade:'#b83239'},
+  '#b7bfc2':{hair:'#6d6254',skin:'#e9bd96',pants:'#555b65',shade:'#8b969c'},
+  '#d36b87':{hair:'#6c4538',skin:'#f1c6a4',pants:'#665064',shade:'#a74766'},
+  '#b8753f':{hair:'#44352c',skin:'#dca47b',pants:'#4b5965',shade:'#89502e'},
+  '#d979a4':{hair:'#e0b45c',skin:'#f0c19a',pants:'#426f9a',shade:'#b85483'},
+  '#4a4c59':{hair:'#302e38',skin:'#d6a27e',pants:'#353641',shade:'#292b36'},
+  '#4e8c77':{hair:'#5c4432',skin:'#e7b58c',pants:'#3e5d59',shade:'#356b59'},
+  '#d66f91':{hair:'#774c44',skin:'#f0c5a3',pants:'#6d5268',shade:'#ad4c71'},
+  '#b36b49':{hair:'#4b3328',skin:'#dba27c',pants:'#47545d',shade:'#8f4f36'},
+  '#657e4e':{hair:'#6a472b',skin:'#e9b68b',pants:'#4e6044',shade:'#456238'},
+  '#9b5d78':{hair:'#3c303e',skin:'#e4b18e',pants:'#51415c',shade:'#77435f'},
+  '#b19a45':{hair:'#5b3f2d',skin:'#efc39c',pants:'#5e6042',shade:'#8e7a32'},
+  '#5474a8':{hair:'#47352d',skin:'#e3b18b',pants:'#3d4b65',shade:'#3d5987'},
+  '#8069a8':{hair:'#3d3049',skin:'#e9b791',pants:'#51435e',shade:'#66518c'}
+ };
+ const pal=npcPalette[color]||{hair:'#49362c',skin:'#e8b58d',pants:'#3f5360',shade:'#244d6b'};
+ const C={
+  o:'#302a30', skin:pal.skin, skinShade:'#c98e6c', hair:pal.hair,
+  hat:color==='#d64c42'?'#e64b43':color, hatShade:color==='#d64c42'?'#a92f36':color,
+  shirt:color, shirtShade:pal.shade,
+  pants:pal.pants, pantsHi:'#667482', shoe:'#eee0c5', white:'#fff4d8'
+ };
+ // sombra no chão
+ rect(px+7,py+28,18,3,'#53814a');rect(px+10,py+29,12,1,'#42683f');
+ // sapatos e pernas
+ rect(px+10,py+25,5,4,C.o);rect(px+17,py+25,5,4,C.o);
+ rect(px+11,py+25,3,2,C.pantsHi);rect(px+18,py+25,3,2,C.pantsHi);
+ rect(px+9,py+28,7,3,C.o);rect(px+17,py+28,7,3,C.o);
+ rect(px+10,py+28,5,2,C.shoe);rect(px+18,py+28,5,2,C.shoe);
+ // braços
+ rect(px+6,py+16,5,8,C.o);rect(px+7,py+17,3,6,C.skin);
+ rect(px+21,py+16,5,8,C.o);rect(px+22,py+17,3,6,C.skin);
+ // tronco e mochila
+ rect(px+9,py+14,14,12,C.o);
+ rect(px+10,py+15,12,9,C.shirt);rect(px+10,py+16,3,7,C.shirtShade);
+ rect(px+19,py+16,2,6,C.white);rect(px+13,py+19,6,2,C.shirtShade);
+ // pescoço, cabeça e orelhas
+ rect(px+13,py+11,6,5,C.skinShade);rect(px+14,py+11,4,4,C.skin);
+ rect(px+9,py+6,14,9,C.o);rect(px+10,py+6,12,8,C.skin);
+ rect(px+8,py+9,3,4,C.o);rect(px+9,py+9,2,3,C.skinShade);
+ rect(px+21,py+9,3,4,C.o);rect(px+21,py+10,2,2,C.skinShade);
+ // cabelo, franja e boné em pixels definidos
+ rect(px+9,py+4,14,5,C.o);rect(px+10,py+4,12,4,C.hair);
+ rect(px+9,py+6,4,3,C.hair);rect(px+14,py+7,3,2,C.skin);
+ rect(px+18,py+7,4,2,C.hair);
+ // boné vermelho do protagonista ou cabelo dos NPCs
+ if(color==='#d64c42'){
+  rect(px+7,py+3,17,4,C.o);rect(px+9,py+2,12,3,'#f4eee0');
+  rect(px+8,py+3,15,3,'#d94440');rect(px+7,py+5,18,2,'#a92f36');
+  rect(px+14,py+3,4,2,'#4f8db1');rect(px+20,py+6,6,2,'#d94440');
+ }else{
+  rect(px+10,py+3,12,2,C.hair);rect(px+8,py+5,4,3,C.hair);
+  if(color==='#7450a0'){rect(px+9,py+2,13,3,'#d8c8a4');rect(px+8,py+4,16,2,'#6c4e8d');}
+  else if(color==='#508b43'){rect(px+9,py+2,13,3,'#6a472b');rect(px+8,py+5,4,4,'#6a472b');rect(px+19,py+5,4,3,'#6a472b');}
+  else if(color==='#3b7185'){rect(px+10,py+2,11,3,'#9a7455');rect(px+9,py+4,3,4,'#9a7455');}
+ }
+ // olhos, nariz e detalhes faciais
+ rect(px+12,py+10,2,2,C.o);rect(px+19,py+10,2,2,C.o);
+ rect(px+12,py+10,1,1,C.white);rect(px+19,py+10,1,1,C.white);
+ rect(px+16,py+12,2,1,C.skinShade);
+ // gola e detalhe da roupa
+ rect(px+13,py+15,5,2,C.white);rect(px+14,py+16,3,2,C.shirtShade);
+ ctx.restore();
+}
+function drawAshSprite(x,y){
+ // Red redesenhado com silhueta mais limpa e detalhes de pixel art.
+ // O desenho pode ocupar parte do tile vizinho, mas posição lógica e colisões não mudam.
+ const px=x*T,py=y*T;
+ ctx.save();ctx.translate(px,py);
+ // Sombra curta no chão
+ rect(8,29,17,2,'#2c5b43');rect(11,30,11,1,'#214633');
+ // Mochila atrás do corpo, com contorno, costura e bolso
+ rect(21,13,7,12,'#493b2b');rect(22,14,5,10,'#b9822e');rect(23,15,3,7,'#e6bd4f');
+ rect(22,20,5,3,'#d49b38');rect(23,21,3,1,'#80542a');rect(22,14,1,7,'#f4d477');
+ // Pernas e calçados com volumes mais definidos
+ rect(11,21,5,7,'#252e42');rect(18,21,5,7,'#252e42');
+ rect(12,22,3,4,'#355878');rect(19,22,3,4,'#355878');
+ rect(10,27,7,3,'#272a31');rect(18,27,7,3,'#272a31');
+ rect(10,27,6,2,'#e8e6d9');rect(19,27,5,2,'#e8e6d9');
+ rect(11,29,5,1,'#9ca9a5');rect(19,29,5,1,'#9ca9a5');
+ // Braços: mangas, contorno e mãos
+ rect(8,14,5,10,'#292d38');rect(9,15,3,6,'#d83d3b');rect(9,21,3,4,'#e8b18a');
+ rect(21,14,5,10,'#292d38');rect(22,15,3,6,'#c93335');rect(22,21,3,4,'#e8b18a');
+ rect(10,22,2,2,'#f2c19a');rect(22,22,2,2,'#f2c19a');
+ // Jaqueta vermelha, sombra lateral e camisa azul
+ rect(11,13,13,11,'#292d38');rect(12,14,11,9,'#c93636');
+ rect(12,15,2,7,'#972d34');rect(14,15,1,6,'#f06a55');rect(21,15,2,7,'#9e3034');
+ rect(15,15,5,7,'#2e5275');rect(16,15,3,1,'#d8e0dc');rect(16,17,2,4,'#477ba0');
+ // Gola, fecho e alças da mochila
+ rect(14,12,6,3,'#f0e8d8');rect(15,13,4,2,'#355778');rect(17,15,1,7,'#e7c45a');
+ rect(12,14,2,7,'#e6bd4f');rect(20,14,2,6,'#e6bd4f');rect(12,19,2,2,'#f5d56e');
+ // Pescoço
+ rect(15,10,5,4,'#8d5947');rect(16,10,3,3,'#f0bd94');
+ // Cabeça e cabelo; contorno de um pixel para separar rosto e cabelo
+ rect(11,5,13,9,'#29272e');rect(12,5,11,8,'#f0bd94');
+ rect(11,7,3,5,'#29272e');rect(12,8,2,3,'#3a3032');rect(21,7,3,5,'#29272e');
+ rect(12,5,3,4,'#28262d');rect(19,5,4,4,'#28262d');rect(12,8,2,3,'#3b3031');
+ // Olhos, sobrancelhas, nariz e boca
+ rect(14,8,3,1,'#49312e');rect(19,8,3,1,'#49312e');
+ rect(15,9,2,2,'#27272d');rect(20,9,2,2,'#27272d');rect(15,9,1,1,'#fff4df');rect(20,9,1,1,'#fff4df');
+ rect(18,11,2,1,'#d89571');rect(17,12,3,1,'#9e5149');
+ // Boné vermelho com aba clara, painel frontal branco e pequeno emblema
+ rect(9,3,16,4,'#29272e');rect(11,2,13,4,'#b82f36');rect(12,2,10,3,'#e34b43');
+ rect(13,3,6,3,'#f0eee4');rect(14,4,4,1,'#d9dfdc');
+ rect(8,6,18,2,'#8f2932');rect(10,6,16,1,'#d83e3c');rect(22,6,4,2,'#c73238');
+ // Pequeno brilho de tecido e fivela da mochila
+ rect(12,3,1,2,'#f46c59');rect(22,15,1,4,'#f4d16a');rect(23,22,2,1,'#f3d77d');
+ ctx.restore();
+}
+
+function drawTownArchitecture(m){
+ if(m.kind!=='town')return;
+ const palettes={
+  pallet:{roof:'#b95748',roofHi:'#e28b68',wall:'#e5d3a7',wallShade:'#b8a27b',trim:'#fff0c9',door:'#76503a',glass:'#6da8b6'},
+  viridian:{roof:'#4f8061',roofHi:'#82ad7a',wall:'#c9d0a8',wallShade:'#9aa986',trim:'#e8edcf',door:'#79533c',glass:'#77b5ba'},
+  pewter:{roof:'#737c83',roofHi:'#a9b0b0',wall:'#d0c9b7',wallShade:'#a7a398',trim:'#f0e8d5',door:'#6d5949',glass:'#7ea7b0'},
+  cerulean:{roof:'#347d91',roofHi:'#6cb4c0',wall:'#d1e0d6',wallShade:'#a3c0c0',trim:'#f3f0d8',door:'#735444',glass:'#5bacc4'},
+  vermilion:{roof:'#b45e48',roofHi:'#df9870',wall:'#e5c49b',wallShade:'#c5a27d',trim:'#fff0cf',door:'#74483a',glass:'#79a9b5'},
+  lavender:{roof:'#786180',roofHi:'#b196b2',wall:'#ded0dc',wallShade:'#b6a4b9',trim:'#f7e9ee',door:'#674a62',glass:'#8a9db7'},
+  celadon:{roof:'#56855b',roofHi:'#90b779',wall:'#d6dfb7',wallShade:'#a8bb8f',trim:'#f2f0d0',door:'#78533b',glass:'#7fb2ae'},
+  saffron:{roof:'#b68a42',roofHi:'#e3bd69',wall:'#eee0b3',wallShade:'#cbb77f',trim:'#fff4d2',door:'#76543a',glass:'#78a9b6'},
+  fuchsia:{roof:'#a75e78',roofHi:'#d895a7',wall:'#ecd0c1',wallShade:'#c7a49d',trim:'#fff0dc',door:'#765044',glass:'#78aab0'},
+  cinnabar:{roof:'#b64f40',roofHi:'#e17d5e',wall:'#edc4a1',wallShade:'#c89a7d',trim:'#fff0d5',door:'#754735',glass:'#75aab4'}
+ };
+ const q=palettes[g.scene]||palettes.pallet;
+ const building=(x,y,w=4,h=3,kind=0)=>{
+  const px=x*T,py=y*T,bw=w*T,bh=h*T;
+  // Base shadow and foundation, deliberately subtle and offset only below the walls.
+  rect(px+5,py+bh-3,bw-1,7,'rgba(40,42,34,.20)');
+  rect(px+2,py+T-2,bw-4,bh-T+4,q.wallShade);
+  rect(px+5,py+T+3,bw-10,bh-T-7,q.wall);
+  // Roof with eaves, layered shingles and a crisp ridge.
+  rect(px-3,py+4,bw+6,T+5,'#493b36');
+  rect(px,py+2,bw,T+5,q.roof);rect(px+3,py+4,bw-6,T-4,q.roofHi);
+  rect(px+2,py+4,bw-4,4,q.roofHi);rect(px+2,py+T-5,bw-4,5,q.roof);
+  for(let row=0;row<3;row++)for(let col=0;col<Math.ceil(w*2);col++){
+   let sx=px+5+col*30+(row%2?13:0),sy=py+9+row*8;
+   if(sx<px+bw-5) {rect(sx,sy,21,2,q.roof);rect(sx+2,sy+2,16,1,'rgba(40,35,35,.25)');}
+  }
+  // Wall timbering and broad front windows create one building, not repeated tiny houses per tile.
+  rect(px+3,py+T+2,bw-6,3,q.trim);rect(px+3,py+bh-10,bw-6,4,q.trim);
+  rect(px+8,py+T+5,4,bh-T-17,q.wallShade);rect(px+bw-12,py+T+5,4,bh-T-17,q.wallShade);
+  const win=(wx,wy)=>{rect(wx-3,wy-3,26,25,'#634d3d');rect(wx,wy,20,19,q.glass);rect(wx+2,wy+2,16,3,'#c5e6dc');rect(wx+9,wy,2,19,q.trim);rect(wx,wy+8,20,2,q.trim);rect(wx-3,wy+19,26,3,q.trim);};
+  win(px+25,py+T+15);win(px+bw-48,py+T+15);
+  const doorX=px+bw/2-13,doorY=py+bh-49;
+  rect(doorX-4,doorY-4,34,52,'#5a4234');rect(doorX,doorY,26,48,q.door);
+  rect(doorX+4,doorY+4,18,18,'#a1c6c5');rect(doorX+5,doorY+5,16,2,'#e0eee0');
+  rect(doorX+4,doorY+24,18,2,'#4e382f');rect(doorX+19,doorY+31,3,3,'#e4c46f');
+  rect(doorX-8,doorY+47,42,4,q.trim);
+  // Planters add a small lived-in detail without cluttering the path.
+  rect(px+10,py+bh-22,15,10,'#8a5a3d');rect(px+12,py+bh-26,11,7,'#3f7d4d');rect(px+16,py+bh-30,7,6,'#5ca260');
+  rect(px+bw-25,py+bh-22,15,10,'#8a5a3d');rect(px+bw-23,py+bh-26,11,7,'#3f7d4d');rect(px+bw-20,py+bh-30,7,6,'#5ca260');
+  if(kind===1){rect(px+bw/2-17,py+T+5,34,7,'#f4e6bc');rect(px+bw/2-14,py+T+6,28,5,'#4d6c76');}
+ };
+ building(4,4,4,3,0);building(13,8,4,3,1);
+ // A few town-specific street details: curbs, signposts, lamps and benches.
+ const sign=(x,y,word)=>{rect(x*T+14,y*T+9,4,19,'#78533a');rect(x*T+4,y*T+3,24,13,'#604432');rect(x*T+6,y*T+5,20,9,'#e8d9a9');rect(x*T+8,y*T+7,16,2,'#5c7d67');};
+ sign(2,8,'');sign(17,4,'');
+ const lamp=(x,y)=>{rect(x*T+14,y*T+11,4,19,'#51545a');rect(x*T+9,y*T+5,14,8,'#4c4b47');rect(x*T+11,y*T+7,10,4,'#f4d991');rect(x*T+8,y*T+4,16,2,'#5b6060');};
+ lamp(2,3);lamp(17,12);
+ rect(8*T+2,12*T+18,4*T-4,4,'#c3a77a');rect(8*T+2,12*T+23,4*T-4,2,'#e4d4ad');
+};
+function drawOutdoorDetails(m){
+ // Repeating tiles receive handcrafted landmark details that vary by region.
+ if(m.kind==='route'){
+  // A broken-edged dirt trail across the grass, with small stones and roadside plants.
+  for(let y=2;y<13;y++){
+   const x=8+Math.floor(Math.sin(y*1.15)*1.7);
+   rect(x*T+11,y*T,10,T,'#bca16c');rect(x*T+12,y*T,8,T,'#d3b982');
+   rect(x*T+14,y*T+5,4,2,'#e3d0a0');
+  }
+  for(let i=0;i<7;i++){let x=(i*7+3)%19,y=(i*5+2)%12+1;if(tile(x,y)==='ground'){rect(x*T+5,y*T+20,3,2,'#6a9c55');rect(x*T+7,y*T+18,3,3,['#f0d58a','#eab8bd','#eee7ce'][i%3]);}}
+ }
+ if(m.kind==='forest'){
+  // Ferns and layered canopy patches create a forest floor instead of a flat green field.
+  for(let i=0;i<12;i++){let x=(i*7+2)%19,y=(i*5+1)%13+1;if(tile(x,y)==='ground'||tile(x,y)==='grass'){
+   rect(x*T+8,y*T+22,15,2,'#376d43');rect(x*T+9,y*T+17,5,6,'#4e9553');rect(x*T+14,y*T+13,5,8,'#65a95d');rect(x*T+19,y*T+18,5,5,'#3f8148');
+  }}
+ }
+ if(m.kind==='cave'){
+  // Mineral seams, stalagmites and cool reflected highlights.
+  for(let i=0;i<9;i++){let x=(i*9+1)%18+1,y=(i*4+2)%12+1;if(tile(x,y)==='cave'){
+   rect(x*T+5,y*T+7,13,3,'#82715d');rect(x*T+7,y*T+10,8,2,'#a2947b');
+   if(i%3===0){rect(x*T+21,y*T+19,4,8,'#4f514e');rect(x*T+20,y*T+17,6,3,'#74766e');}
+  }}
+ }
+ if(m.kind==='ship'){
+  // Plank seams, brass fittings and portholes across the ship decks.
+  for(let x=2;x<18;x+=2){rect(x*T,12*T+3,1,2,'#c29a60');rect(x*T+T/2,5*T+3,2,2,'#f1d28a');}
+  for(let x=4;x<17;x+=4){rect(x*T+7,3*T+8,18,18,'#59493b');rect(x*T+10,3*T+11,12,12,'#74a9b6');rect(x*T+12,3*T+13,8,2,'#c4e5df');}
+ }
+}
+function draw(){ctx.clearRect(0,0,c.width,c.height);let m=maps[g.scene];for(let y=0;y<H;y++)for(let x=0;x<W;x++)drawTile(x,y,tile(x,y));drawTownArchitecture(m);drawOutdoorDetails(m);if(m.kind==='room'){
+ // Quarto do Ash: composição simples de FireRed — PC à esquerda, cama, TV/console,
+ // tapete verde central e escada compacta no canto superior direito.
+ // Parede em tons claros com friso azul-esverdeado e rodapé de madeira.
+ rect(1*T,1*T,18*T,2*T,'#e8e0ca');
+ rect(1*T,1*T,18*T,7,'#c4c7bd');rect(1*T,1*T+7,18*T,4,'#e9e4d4');
+ rect(1*T,2*T+3,18*T,5,'#81aaa6');rect(1*T,2*T+8,18*T,3,'#557e7b');
+ for(let wx=2;wx<18;wx+=3){rect(wx*T+3,1*T+15,2,2*T-25,'#d5cfbc');}
+ rect(1*T,3*T-5,18*T,5,'#8a6242');rect(1*T,3*T,18*T,3,'#5a412e');
+
+ // Estante/PC no lado esquerdo: moldura de madeira, livros e monitor legível.
+ const pcx=2*T+3,pcy=1*T+13,pcw=3*T-4,pch=1*T+31;
+ rect(pcx-2,pcy-2,pcw+4,pch+4,'#49362a');rect(pcx,pcy,pcw,pch,'#9a6942');
+ rect(pcx+4,pcy+4,pcw-8,10,'#d2a36c');
+ const bookCols=['#b64e45','#447b9a','#d1ad4c','#4f835c','#b76c49'];
+ for(let i=0;i<5;i++){rect(pcx+6+i*13,pcy+5,9,8,bookCols[i]);rect(pcx+7+i*13,pcy+6,2,6,'#e5d8b7');}
+ rect(pcx+4,pcy+18,pcw-8,3,'#563b2b');
+ rect(pcx+20,pcy+22,38,25,'#3d474a');rect(pcx+24,pcy+25,30,17,'#75aab2');
+ rect(pcx+27,pcy+28,20,4,'#bfe0d6');rect(pcx+37,pcy+42,5,4,'#c8d0be');
+ rect(pcx+12,pcy+47,54,4,'#6d482f');
+
+ // TV de tubo e console na parede do fundo, em vez de objetos altos e confusos.
+ const tvx=8*T+2,tvy=1*T+17,tvw=2*T-4,tvh=1*T+13;
+ rect(tvx-3,tvy-3,tvw+6,tvh+6,'#4d443a');rect(tvx,tvy,tvw,tvh,'#8b8f8b');
+ rect(tvx+4,tvy+4,tvw-8,tvh-11,'#303b42');rect(tvx+7,tvy+7,tvw-14,tvh-17,'#79b7c1');
+ rect(tvx+10,tvy+10,19,4,'#c5e8d7');rect(tvx+32,tvy+17,10,5,'#5b91a5');
+ rect(tvx+tvw-1,tvy+8,1,1,'#e8e1ca');
+ // Base do televisor e console de jogo pequeno, sem brilho exagerado.
+ rect(tvx+8,tvy+tvh-4,tvw-16,6,'#625344');
+ rect(tvx+20,tvy+tvh+1,28,7,'#383a3c');rect(tvx+23,tvy+tvh+2,22,2,'#687b7e');
+ rect(tvx+26,tvy+tvh+8,16,2,'#d3c6a2');
+
+ // Pequeno quadro de Kanto junto à escada.
+ const qx=14*T+2,qy=1*T+14;
+ rect(qx-2,qy-2,27,35,'#6c4b34');rect(qx,qy,23,31,'#f0e8d1');
+ rect(qx+4,qy+4,15,22,'#9dbdb1');rect(qx+6,qy+7,5,5,'#679a92');
+ rect(qx+12,qy+14,6,7,'#d1a55b');rect(qx+4,qy+27,15,2,'#b8a886');
+
+ // Cama à esquerda, com armação de madeira, travesseiro e coberta azul (sem mochila no chão).
+ const bx=1*T+5,by=4*T+2,bw=2*T+12,bh=3*T+6;
+ rect(bx-3,by+2,bw+6,bh+5,'#49352a');rect(bx,by,bw,bh,'#8a6242');
+ rect(bx+4,by+4,bw-8,bh-8,'#e9e6d9');rect(bx+7,by+7,bw-14,17,'#f7f2df');
+ rect(bx+6,by+27,bw-12,bh-35,'#557fa8');rect(bx+8,by+30,bw-16,3,'#7fa4c2');
+ rect(bx+10,by+42,4,bh-55,'#d8e6df');rect(bx+bw-14,by+42,4,bh-55,'#d8e6df');
+ rect(bx+6,by+bh-7,bw-12,3,'#d7c9a8');
+
+ // Escrivaninha pequena ao lado da cabeceira, com madeira nítida e despertador Poké Bola.
+ const dx=4*T+3,dy=4*T+5,dw=1*T+5,dh=1*T+8;
+ rect(dx-2,dy-2,dw+4,dh+4,'#513a2b');rect(dx,dy,dw,dh,'#92653d');
+ rect(dx+2,dy+2,dw-4,8,'#d3a36a');rect(dx+3,dy+12,dw-6,dh-17,'#795035');
+ rect(dx+8,dy+18,dw-16,12,'#ba8855');rect(dx+14,dy+22,4,3,'#e1c18a');
+ // Despertador circular pixelado, metade vermelha/metade marfim e botão central.
+ rect(dx+9,dy-12,18,4,'#393d40');rect(dx+7,dy-9,22,17,'#393d40');
+ rect(dx+9,dy-8,18,7,'#d94a43');rect(dx+9,dy-1,18,7,'#f2eee0');
+ rect(dx+16,dy-3,4,5,'#34383a');rect(dx+17,dy-2,2,3,'#f6e9bf');
+
+ // Tapete verde grande e simples: moldura, filete creme e padrão regular de pontos.
+ const rx=5*T+2,ry=6*T+1,rw=8*T+13,rh=4*T-4;
+ rect(rx,ry,rw,rh,'#284f40');rect(rx+5,ry+5,rw-10,rh-10,'#e8dfbb');
+ rect(rx+9,ry+9,rw-18,rh-18,'#6fa77a');
+ for(let yy=ry+18;yy<ry+rh-18;yy+=25)for(let xx=rx+18;xx<rx+rw-18;xx+=27)rect(xx,yy,4,4,'#d4e5ad');
+
+ // Escada compacta com degraus visíveis e corrimãos finos — a entrada funcional fica em x16–17, y3.
+ const sx=16*T+4,sy=1*T+2,sw=2*T-8,sh=3*T+16;
+ rect(sx-3,sy-3,sw+6,sh+6,'#49352a');rect(sx,sy,sw,sh,'#9b7950');
+ rect(sx+5,sy+4,sw-10,sh-8,'#b8a17d');
+ rect(sx+4,sy+4,4,sh-8,'#6a4a32');rect(sx+sw-8,sy+4,4,sh-8,'#6a4a32');
+ for(let i=0;i<7;i++){
+  const stepY=sy+8+i*14;
+  rect(sx+8,stepY,sw-16,9,(i%2===0)?'#e5d2aa':'#d8c39a');
+  rect(sx+8,stepY+7,sw-16,2,'#96734d');
+  rect(sx+10,stepY+1,sw-20,2,'#f0dfbd');
+ }
+ rect(sx+8,sy+sh-12,sw-16,7,'#e1cba2');
+}
+if(m.kind==='home'){
+ // Primeiro andar inspirado no mapa de FireRed: cozinha compacta, TV ao fundo,
+ // tapete central com mesa de jantar, plantas nos cantos e escada no nordeste.
+ rect(1*T,1*T,18*T,2*T,'#e8e0ca');
+ rect(1*T,1*T,18*T,7,'#c4c7bd');rect(1*T,1*T+7,18*T,4,'#e9e4d4');
+ rect(1*T,2*T+3,18*T,5,'#81aaa6');rect(1*T,2*T+8,18*T,3,'#557e7b');
+ for(let wx=2;wx<18;wx+=3){rect(wx*T+3,1*T+15,2,2*T-25,'#d5cfbc');}
+ rect(1*T,3*T-5,18*T,5,'#8a6242');rect(1*T,3*T,18*T,3,'#5a412e');
+
+ // Cozinha curta à esquerda: geladeira, balcão e pia, sem acumular objetos no caminho.
+ const fx=2*T+2,fy=1*T+14;
+ rect(fx-2,fy-2,34,57,'#514239');rect(fx,fy,30,53,'#e3e3d6');
+ rect(fx+3,fy+3,24,17,'#c9d0c7');rect(fx+4,fy+23,22,26,'#ebe9dc');
+ rect(fx+22,fy+27,2,10,'#8d9a92');
+ const kx=3*T+8,ky=2*T+1;
+ rect(kx-2,ky-2,3*T+7,24,'#59412f');rect(kx,ky,3*T+3,18,'#b78c5b');
+ rect(kx+3,ky+2,3*T-3,5,'#e2c18a');rect(kx+8,ky+7,3*T-12,3,'#7d9fa1');
+ rect(kx+11,ky+4,24,10,'#d8e1da');rect(kx+15,ky+6,16,6,'#9fbec0');
+ rect(kx+4,ky+20,3*T-4,3,'#755136');
+
+ // TV sobre móvel baixo na parede do fundo, com a tela visível e um console simples.
+ const hvx=8*T+2,hvy=1*T+16,hvw=2*T+4,hvh=1*T+13;
+ rect(hvx-3,hvy-3,hvw+6,hvh+7,'#4b4035');rect(hvx,hvy,hvw,hvh,'#8d9088');
+ rect(hvx+4,hvy+4,hvw-8,hvh-10,'#313c42');rect(hvx+7,hvy+7,hvw-14,hvh-16,'#79b3bd');
+ rect(hvx+11,hvy+10,20,4,'#d1e8d9');rect(hvx+34,hvy+17,10,5,'#5a8e9b');
+ rect(hvx+9,hvy+hvh-4,hvw-18,6,'#5d4937');
+ rect(hvx+19,hvy+hvh+2,30,7,'#35393b');rect(hvx+22,hvy+hvh+3,24,2,'#9da3a0');
+
+ // Quadro decorativo pequeno à direita, longe da passagem da escada.
+ rect(13*T+5,1*T+14,30,35,'#6c4b34');rect(13*T+8,1*T+17,24,29,'#f0e8d1');
+ rect(13*T+11,1*T+20,18,20,'#9dbdb1');rect(13*T+13,1*T+24,6,5,'#679a92');rect(13*T+21,1*T+31,6,6,'#d1a55b');
+
+ // Tapete central verde, com borda clara e pontos espaçados para lembrar o desenho de GBA.
+ const rx=4*T+4,ry=4*T+15,rw=11*T-8,rh=6*T-5;
+ rect(rx,ry,rw,rh,'#284f40');rect(rx+5,ry+5,rw-10,rh-10,'#e8dfbb');
+ rect(rx+9,ry+9,rw-18,rh-18,'#6fa77a');
+ for(let yy=ry+18;yy<ry+rh-18;yy+=27)for(let xx=rx+18;xx<rx+rw-18;xx+=29)rect(xx,yy,4,4,'#d4e5ad');
+
+ // Mesa central com toalha quadriculada e madeira aparente.
+ const tx=8*T+2,ty=6*T+2,tw=4*T+4,th=1*T+21;
+ rect(tx-4,ty+5,tw+8,th+6,'#49352a');rect(tx,ty,tw,th,'#8b5c39');
+ rect(tx+5,ty+4,tw-10,th-8,'#e5e6d9');
+ for(let yy=ty+5;yy<ty+th-5;yy+=12)for(let xx=tx+6;xx<tx+tw-6;xx+=12){
+  if(((Math.floor((xx-(tx+6))/12)+Math.floor((yy-(ty+5))/12))%2)===0)rect(xx,yy,11,11,'#8fb5bd');
+  else rect(xx,yy,11,11,'#d9e4d8');
+ }
+ rect(tx+4,ty+3,tw-8,2,'#f2efdf');
+ // Cadeiras simples nas laterais da mesa; deixam a faixa inferior livre para a mãe e a saída.
+ const chair=(cx,cy)=>{rect(cx-2,cy-2,29,29,'#4b3528');rect(cx,cy,25,25,'#906341');rect(cx+3,cy+3,19,18,'#648fa0');rect(cx+4,cy+4,17,3,'#91b6be');rect(cx+3,cy+22,19,2,'#6f4b33');};
+ chair(6*T+12,6*T+13);chair(12*T+12,6*T+13);
+ chair(8*T+14,4*T+15);chair(11*T+7,4*T+15);
+
+ // Vasos de plantas em ambos os cantos inferiores, como decoração da casa no jogo original.
+ const plant=(px,py)=>{
+  rect(px,py,24,20,'#6d4933');rect(px+3,py+3,18,4,'#bd8b5c');
+  rect(px+7,py-8,11,13,'#39734b');rect(px+1,py-3,9,10,'#4b8c54');
+  rect(px+12,py-14,11,13,'#5ca260');rect(px+15,py-7,7,8,'#72b66a');
+ };
+ plant(2*T+7,11*T+4);plant(17*T+1,11*T+4);
+
+ // Escada compacta igual à do quarto, sem bloco gigante ou sombras artificiais.
+ const sx=16*T+4,sy=1*T+2,sw=2*T-8,sh=3*T+16;
+ rect(sx-3,sy-3,sw+6,sh+6,'#49352a');rect(sx,sy,sw,sh,'#9b7950');
+ rect(sx+5,sy+4,sw-10,sh-8,'#b8a17d');
+ rect(sx+4,sy+4,4,sh-8,'#6a4a32');rect(sx+sw-8,sy+4,4,sh-8,'#6a4a32');
+ for(let i=0;i<7;i++){
+  const stepY=sy+8+i*14;
+  rect(sx+8,stepY,sw-16,9,(i%2===0)?'#e5d2aa':'#d8c39a');
+  rect(sx+8,stepY+7,sw-16,2,'#96734d');
+  rect(sx+10,stepY+1,sw-20,2,'#f0dfbd');
+ }
+ rect(sx+8,sy+sh-12,sw-16,7,'#e1cba2');
+
+ // Porta de saída ao centro da parede inferior, com capacho vermelho-mate.
+ rect(8*T,12*T+22,2*T,2*T,'#624330');rect(8*T+4,12*T+26,2*T-8,2*T-10,'#a16d45');
+ rect(9*T+19,13*T+15,4,4,'#e7c66f');rect(8*T+4,13*T+20,2*T-8,8,'#9c4f46');
+}
+if(g.scene==='pokemonCenter'){rect(4*T,3*T,12*T,2*T,'#e8eee7');rect(8*T,6*T,4*T,2*T,'#b75c57');rect(9*T,6*T,2*T,2*T,'#f2f0df');rect(9*T+7,6*T+6,5,20,'#d94d4d');rect(8*T+13,6*T+13,20,5,'#d94d4d')}if(g.scene==='pokemonShop'){rect(3*T,3*T,4*T,5*T,'#87674b');rect(13*T,3*T,4*T,5*T,'#87674b');for(let y=0;y<3;y++){rect(3*T,3*T+y*16,4*T,3,'#e3b153');rect(13*T,3*T+y*16,4*T,3,'#e3b153')}rect(8*T,7*T,4*T,2*T,'#8d6647')}if(m.kind==='ship'){rect(3*T,2*T,14*T,2*T,'#426d83');rect(3*T,4*T,14*T,2*T,'#e1c87f');rect(4*T,5*T,2*T,T,'#6da4b0');rect(14*T,5*T,2*T,T,'#6da4b0');for(let x=3;x<17;x++)rect(x*T,12*T,T,2,'#9b7547')}if(m.kind==='gym'){rect(3*T,2*T,14*T,2*T,'#426a83');rect(3*T,4*T,14*T,2*T,'#b9a777');rect(6*T,10*T,8*T,T,'#82633f')}if(g.scene==='surgeGym'){rect(3*T,3*T,14*T,2*T,'#426a83');rect(4*T,5*T,12*T,6*T,'#9a8766');rect(4*T,11*T,12*T,2*T,'#574a42');rect(6*T,7*T,2*T,2*T,g.surgeSwitch1?'#62bd69':'#bd5546');rect(12*T,7*T,2*T,2*T,g.surgeDoorOpen?'#62bd69':'#bd5546');rect(9*T,3*T,2*T,2*T,g.surgeDoorOpen?'#74b66d':'#8a392f')}if(g.scene==='lab'){rect(3*T,3*T,14*T,2*T,'#588c99');rect(5*T,8*T,10*T,2*T,'#816249');['#5ab86a','#df793f','#5687cb'].forEach((co,i)=>{let bx=(7+i*2)*T+7,by=7*T+5;rect(bx+2,by,10,4,co);rect(bx,by+4,14,7,co);rect(bx+2,by+11,10,4,'#f5f1de');rect(bx,by+9,14,2,'#333a3d');rect(bx+5,by+7,4,4,'#eee5c9');rect(bx+6,by+8,2,2,'#35434a')})}m.npc.filter(n=>n.kind!=='starter'&&n.kind!=='object').forEach(n=>{
+ let label=n.label.toLowerCase(),col;
+ if(label.includes('gary'))col='#7450a0';
+ else if(label.includes('grama'))col='#508b43';
+ else if(label.includes('professor')||label.includes('assistente')||label.includes('pesquisador'))col='#b7bfc2';
+ else if(label.includes('mãe')||label.includes('enfermeira'))col='#d36b87';
+ else if(label.includes('brock')||label.includes('treinador do ginásio'))col='#b8753f';
+ else if(label.includes('misty'))col='#d979a4';
+ else if(label.includes('giovanni')||label.includes('rocket'))col='#4a4c59';
+ else if(label.includes('bill')||label.includes('celio'))col='#4e8c77';
+ else if(label.includes('enfermeira')||label.includes('centro'))col='#d66f91';
+ else {const wardrobe=['#3b7185','#b36b49','#657e4e','#9b5d78','#b19a45','#5474a8','#8069a8'];col=wardrobe[(n.x*3+n.y*5+g.scene.length)%wardrobe.length];}
+ actor(n.x,n.y,col);
+});drawAshSprite(g.x,g.y);if(g.scene==='rockTunnel'&&!g.flash){let shade=ctx.createRadialGradient(g.x*T+T/2,g.y*T+T/2,30,g.x*T+T/2,g.y*T+T/2,220);shade.addColorStop(0,'rgba(0,0,0,0)');shade.addColorStop(.4,'rgba(0,0,0,.45)');shade.addColorStop(1,'rgba(0,0,0,.96)');ctx.fillStyle=shade;ctx.fillRect(0,0,c.width,c.height)}
+ // Luz ambiental por região: interiores quentes, floresta fresca e cavernas neutras.
+ if(m.kind==='room'||m.kind==='home'||m.kind==='lab'||m.kind==='building'||m.kind==='gym'){
+  const light=ctx.createRadialGradient(c.width*.48,c.height*.2,18,c.width*.48,c.height*.2,390);light.addColorStop(0,'rgba(255,239,190,.09)');light.addColorStop(1,'rgba(116,75,40,.06)');ctx.fillStyle=light;ctx.fillRect(0,0,c.width,c.height);
+ }else if(m.kind==='town'){
+  const light=ctx.createRadialGradient(c.width*.5,c.height*.3,20,c.width*.5,c.height*.3,440);light.addColorStop(0,'rgba(255,245,197,.08)');light.addColorStop(1,'rgba(35,64,48,.10)');ctx.fillStyle=light;ctx.fillRect(0,0,c.width,c.height);
+ }else if(m.kind==='route'){
+  const light=ctx.createLinearGradient(0,0,c.width,c.height);light.addColorStop(0,'rgba(245,238,173,.035)');light.addColorStop(1,'rgba(28,69,39,.09)');ctx.fillStyle=light;ctx.fillRect(0,0,c.width,c.height);
+ }else if(m.kind==='forest'){
+  const light=ctx.createRadialGradient(c.width*.5,c.height*.35,10,c.width*.5,c.height*.35,380);light.addColorStop(0,'rgba(198,235,142,.07)');light.addColorStop(1,'rgba(18,58,34,.09)');ctx.fillStyle=light;ctx.fillRect(0,0,c.width,c.height);
+ }
+ let vignette=ctx.createRadialGradient(c.width/2,c.height/2,100,c.width/2,c.height/2,430);vignette.addColorStop(0,'rgba(12,28,24,0)');vignette.addColorStop(1,'rgba(12,28,24,.14)');ctx.fillStyle=vignette;ctx.fillRect(0,0,c.width,c.height);hud.innerHTML=m.name+'<br><small>'+objective()+'</small>';document.querySelector('#badges').textContent='Insígnias: '+g.badges+'/8';}
+function nearNPC(){let m=maps[g.scene];return m.npc.find(n=>Math.abs(n.x-g.x)+Math.abs(n.y-g.y)<=1)}
+function blockedByFurniture(scene,x,y){
+ if(scene==='quarto'){
+  // Parede de trás; a abertura da escada permanece transitável em x16–17, y3.
+  if(y>=1&&y<=2&&!(x>=16&&x<=17))return true;
+  // Cama, escrivaninha/despertador, estante com PC e TV.
+  if(x>=1&&x<=3&&y>=4&&y<=7)return true;
+  if(x>=4&&x<=5&&y>=4&&y<=5)return true;
+  if(x>=2&&x<=4&&y>=2&&y<=3)return true;
+  if(x>=7&&x<=10&&y>=2&&y<=3)return true;
+  if(x>=14&&x<=14&&y>=2&&y<=3)return true;
+ }
+ if(scene==='casa'){
+  if(y>=1&&y<=2&&!(x>=16&&x<=17))return true;
+  // Geladeira/balcão da cozinha e TV na parede do fundo.
+  if(x>=2&&x<=6&&y>=2&&y<=3)return true;
+  if(x>=7&&x<=10&&y>=2&&y<=3)return true;
+  if(x>=13&&x<=14&&y>=2&&y<=3)return true;
+  // Mesa de jantar e cadeiras laterais; corredor até a porta fica aberto.
+  if(x>=8&&x<=12&&y>=6&&y<=7)return true;
+  if((x===6||x===12)&&y===6)return true;
+  if((x===8||x===11)&&y===5)return true;
+  if((x<=3||x>=17)&&y>=10&&y<=11)return true;
+ }
+ return false;
+}
+function move(dx,dy){let now=performance.now();if(now-lastMoveAt<movementDelay||box.classList.contains('show')||battle||menu||transitionLock)return;lastMoveAt=now;let nx=g.x+dx,ny=g.y+dy,t=tile(nx,ny);if(g.scene==='pallet'&&dx===0&&dy===-1&&g.y===7&&g.x>=5&&g.x<=6){enter('casa','pallet');return}if(g.scene==='pallet'&&dx===0&&dy===-1&&g.y===11&&nx===15&&ny===10){enter('lab','pallet');return}if(g.scene==='lab'&&dx===0&&dy===1&&g.y===13&&nx>=9&&nx<=10&&ny===14){enter('pallet','lab');return}if(g.scene==='casa'&&nx>=16&&nx<=17&&ny===3&&!(g.x>=16&&g.x<=17&&g.y===3)){enter('quarto','casa');return}if(g.scene==='quarto'&&nx>=16&&nx<=17&&ny===3&&!(g.x>=16&&g.x<=17&&g.y===3)){enter('casa','quarto');return}if(t==='#'||t==='tree'||t==='rock'||t==='building'||blockedByFurniture(g.scene,nx,ny)||(maps[g.scene].npc||[]).some(n=>n.x===nx&&n.y===ny))return;if(t==='exit'){if(g.scene==='ssAnne'&&g.shipRival&&g.cut)g.ssAnneDeparted=true;if(g.scene==='safariZone'&&nx===0){g.safariUsed=false;g.items.safariBall=0}let m=maps[g.scene];if(g.scene==='pallet'&&ny===0&&!g.starter){say('Professor Oak: Pare! A grama alta é perigosa sem um Pokémon. Venha comigo ao laboratório.',[['Ir ao laboratório',()=>enter('lab')],['Depois',()=>{}]]);return}if(g.scene==='pallet'&&ny===0&&g.starter&&!g.rival){say('Gary ainda quer batalhar antes de você sair de Pallet.');return}if(g.scene==='casa'&&ny===H-1&&nx>=8&&nx<=9){enter('pallet','casa');return}if(g.scene==='quarto'&&ny===H-1){enter('casa','quarto');return}if(ny===0&&m.north)enter(m.north,g.scene);else if(ny===H-1&&m.south)enter(m.south,g.scene);else if(nx===W-1&&m.east)enter(m.east,g.scene);else if(nx===0&&m.west)enter(m.west,g.scene);return}g.x=nx;g.y=ny;save();if(g.party.length&&((t==='grass'&&Math.random()<.08)||(maps[g.scene].kind==='cave'&&Math.random()<.06)))wildBattle();draw()}
+function interact(){if(box.classList.contains('show'))return;let n=nearNPC();if(!n){say('Não há nada para interagir aqui.');return}let label=n.label;
+if(label==='Mãe'){g.dialogueDone.mom=true;g.mission=Math.max(g.mission,1);say('Mãe: Bom dia! O Professor Carvalho está esperando por você. Desça as escadas e comece sua jornada. Quer descansar antes de sair?', [['Descansar',()=>{g.party.forEach(p=>p.hp=p.max);say('Sua equipe está descansada!')}],['Continuar',()=>{}]]);save()}
+else if(label==='Videogame')say('O console está ligado à TV. Você estava jogando um jogo de aventura; agora chegou a hora de começar sua própria jornada!');
+else if(label==='PC')say('O PC do quarto guarda informações úteis da jornada. A tela mostra que ainda não há nenhum registro salvo.');
+else if(label==='Professor Carvalho'){if(g.package){g.package=false;g.mission=5;g.pokedexObtained=true;Object.keys(g.seen).forEach(nm=>{if(!g.pokedex.includes(nm))g.pokedex.push(nm)});if(!g.pokedex.includes(g.starter))g.pokedex.push(g.starter);g.items.pokeball+=5;say('Carvalho: Obrigado pelo pacote! Aqui está sua Pokédex e cinco Poké Bolas. Agora descubra Kanto!')}else if(!g.starter)say('Carvalho: Escolha um companheiro entre as três Poké Bolas sobre a mesa. Gary também escolherá um Pokémon.');else say('Carvalho: Sua jornada começou! Explore Kanto e complete sua Pokédex.')}
+else if(label==='Ginásio'){let doors={pewter:'pewterGym',cerulean:'ceruleanGym',celadon:'celadonGym',saffron:'saffronGym',fuchsia:'fuchsiaGym',cinnabar:'cinnabarGym'};if(doors[g.scene])enter(doors[g.scene],g.scene);else say('O ginásio fica logo adiante.')}else if(label.startsWith('Poké Bola')){if(!g.starter&&n.starter!==undefined)chooseStarter(n.starter);else if(!g.starter)say('O Professor Carvalho está esperando que você escolha seu primeiro Pokémon.');else say('Esta Poké Bola está vazia. Seu companheiro já foi escolhido.')}
+else if(label==='Gary'){if(!g.starter)say('Gary: Escolha seu Pokémon primeiro. Depois quero batalhar!');else if(!g.rival){let i=(names.indexOf(g.starter)+1)%3;let enemy={...starts[i],level:5,max:starts[i].hp,hp:starts[i].hp};battleStart(enemy,'Gary',true)}else say('Gary: Vou ser o melhor treinador de Kanto!')}
+else if(label==='Grama alta'){if(g.party.length)wildBattle();else say('A grama alta se mexe... O Professor Carvalho avisa que é perigoso sem um Pokémon!')}
+else if(label==='Centro Pokémon')enter('pokemonCenter',g.scene);else if(label==='Enfermeira'){g.party.forEach(p=>p.hp=p.max);save();say('Enfermeira: Sua equipe está totalmente recuperada.')}else if(label==='Computador')say('PC do Centro Pokémon', [['Guardar Pokémon',pcStore],['Retirar Pokémon',pcTake],['Sair',()=>{}]])
+else if(label==='Loja Pokémon')enter('pokemonShop',g.scene);else if(label==='Atendente')shop();else if(label==='Saída')enter(g.returnTo||'pallet',g.scene)
+else if(label==='Brock'||label==='Misty'||label==='Lt. Surge'||label==='Erika'||label==='Sabrina'||label==='Koga'||label==='Blaine'||label==='Giovanni'){gym(label)}
+else if(label==='Árvore'){if(!g.cut)say('Esta árvore pode ser removida com Cut.');else if(g.clearedTree)say('O caminho está livre.');else{g.clearedTree=true;save();draw();say('Você usou Cut e removeu a árvore do caminho.')}}
+else if(label==='Pedra'){if(!g.strength)say('A pedra é pesada demais. Você precisa de Strength.');else if(g.rockMoved)say('A pedra já foi movida.');else{g.rockMoved=true;save();draw();say('Você usou Strength e moveu a pedra.')}}
+else if(label==='Bill'){if(!g.billHelped)say('Bill: Um acidente de teletransporte me deixou preso nesta forma. Pode me ajudar a voltar ao normal?', [['Ajudar',()=>{g.billHelped=true;save();say('Bill voltou à forma humana! Ele prometeu um ingresso para o S.S. Anne.')}],['Depois',()=>{}]]);else if(!g.ticket){g.ticket=true;save();say('Bill: Obrigado pela ajuda. Aqui está um ingresso para o S.S. Anne.')}else say('Bill: Boa viagem no navio!')}
+else if(label==='Interruptor 1'){if(g.surgeDoorOpen)say('A porta do líder já está aberta.');else{g.surgeSwitch1=true;save();say('Você acionou o primeiro interruptor. Agora encontre o outro.')}}
+else if(label==='Interruptor 2'){if(g.surgeDoorOpen)say('A porta do líder já está aberta.');else if(g.surgeSwitch1){g.surgeDoorOpen=true;save();say('Os dois interruptores foram ativados. A porta de Lt. Surge se abriu.')}else{g.surgeSwitch1=false;save();say('Nada aconteceu. Parece que você precisa encontrar o primeiro interruptor antes.')}}
+else if(label==='Treinador do Ginásio'){gymTrainer()}else if(label==='Cabines')enter('ssAnneCabins',g.scene);else if(label==='Escadas')enter('ssAnneUpper',g.scene);else if(label==='Voltar ao convés'||label==='Escada de volta')enter('ssAnne',g.scene);else if(label==='Baú do navio'){if(g.shipTreasure)say('O baú está vazio.');else{g.shipTreasure=true;g.items.potion++;save();say('Você encontrou uma Poção no baú do navio.')}}else if(label==='Capitão'){if(!g.shipRival)say('Capitão: Explore o navio e encontre Gary. Depois volte para falar comigo.');else if(!g.cut){g.cut=true;say('Capitão: Obrigado pela ajuda. Você recebeu Cut, uma técnica para remover pequenas árvores.')}else say('Capitão: Boa viagem, treinador!')}
+else if(label==='Gary no navio'){if(!g.shipRival)battleStart({...starts[(names.indexOf(g.starter)+2)%3],level:9,max:48,hp:48,atk:12},'Gary no navio',true);else say('Gary: Estou treinando para ser o Campeão!')}
+else if(label==='Game Corner'){g.rocketDiscovered=true;say('Você encontrou uma alavanca escondida atrás de um pôster. Uma passagem secreta para o esconderijo Rocket se abriu.')}
+else if(label==='Painel Silph'){if(g.scene==='silphCo')enter('silphFloor2',g.scene);else if(g.scene==='silphFloor2'){if(g.silphGuard1&&g.silphGuard2&&g.silphKeycard)enter('silphFloor3',g.scene);else say('O teletransportador exige que os dois recrutas sejam derrotados e o Cartão de Acesso seja encontrado.')}else say('O painel não responde daqui.')}else if(label==='Cartão de Acesso'){if(!g.silphGuard2)say('O recruta ainda está guardando o cartão.');else if(g.silphKeycard)say('Você já encontrou o Cartão de Acesso.');else{g.silphKeycard=true;save();say('Você encontrou o Cartão de Acesso da Silph Co.')} }else if(label==='Painel de Saída'){let back={silphFloor3:'silphFloor2',silphFloor2:'silphCo',rocketFloor3:'rocketFloor2',rocketFloor2:'rocketHideout'}[g.scene];if(back)enter(back,g.scene);else say('O painel não responde daqui.')}else if(label==='Recruta Silph 1'){if(g.silphGuard1)say('Este recruta já foi derrotado.');else battleStart({name:'Koffing',type:'Veneno',hp:62,max:62,atk:13,level:28,moves:['Ferrão']},label)}else if(label==='Recruta Silph 2'){if(g.silphGuard2)say('Este recruta já foi derrotado.');else battleStart({name:'Raticate',type:'Normal',hp:68,max:68,atk:15,level:30,moves:['Investida']},label)}else if(label==='Painel Rocket'){if(g.scene==='rocketHideout')enter('rocketFloor2',g.scene);else if(g.scene==='rocketFloor2'){if(g.rocketGuard1&&g.rocketGuard2)enter('rocketFloor3',g.scene);else say('O painel exige que os dois recrutas deste esconderijo sejam derrotados.')}else say('O painel não responde daqui.')}else if(label==='Recruta Rocket 1'){if(g.rocketGuard1)say('Este recruta já foi derrotado.');else battleStart({name:'Zubat',type:'Voador',hp:42,max:42,atk:10,level:20,moves:['Ataque de Asa']},label)}else if(label==='Recruta Rocket 2'){if(g.rocketGuard2)say('Este recruta já foi derrotado.');else battleStart({name:'Raticate',type:'Normal',hp:50,max:50,atk:12,level:22,moves:['Investida']},label)}else if(label==='Equipe Rocket'){battleStart({name:'Recruta Rocket',type:'Veneno',hp:32,max:32,atk:7,moves:['Investida']},'Equipe Rocket')}
+else if(label==='Giovanni Rocket'){if(g.rocketCleared)say('O esconderijo está vazio.');else battleStart({name:'Giovanni',type:'Terra',hp:68,max:68,atk:12,level:18,moves:['Investida']},'Giovanni Rocket')}
+else if(label==='Rocket das Ilhas'){if(g.rocketIslandCleared)say('A Equipe Rocket já foi retirada da caverna.');else battleStart({name:'Chefe Rocket',type:'Veneno',hp:82,max:82,atk:14,level:38,moves:['Investida']},'Rocket das Ilhas')}
+else if(label==='Ruby'||label==='Sapphire'){if(!g.seviiQuest)say('Uma pedra preciosa está guardada aqui. Celio pode explicar por que ela é importante.');else if(!g.rocketIslandCleared)say('A Equipe Rocket está protegendo esta área.');else if(label==='Ruby'&&!g.ruby){g.ruby=true;g.mission=8;save();say('Você encontrou a Ruby!')}else if(label==='Sapphire'&&!g.sapphire){g.sapphire=true;g.mission=8;save();say('Você encontrou a Sapphire!')}else say('Este local está vazio.')}
+else if(label==='Giovanni Silph'){if(g.silphRescued)say('A Silph Co. foi libertada da Equipe Rocket.');else battleStart({name:'Giovanni',type:'Terra',hp:82,max:82,atk:13,level:24,moves:['Investida']},'Giovanni Silph')}
+else if(label==='Funcionário Silph'){if(!g.silphRescued)say('Funcionário: Derrote Giovanni para libertar a empresa.');else if(!g.silphGift){g.silphGift=true;g.money+=200;save();say('Funcionário: Obrigado por salvar a empresa. Você recebeu 200 moedas.')}else say('Funcionário: A Silph Co. voltou ao trabalho graças a você.')}
+else if(label==='Assistente'){g.flash=true;say('O assistente entregou Flash, que ajuda a iluminar cavernas escuras.')}
+else if(label==='Mr. Fuji'){if(!g.silphScope)say('Mr. Fuji: Obrigado por me procurar. Precisamos primeiro identificar os fantasmas com o Silph Scope.');else if(!g.towerRocketCleared)say('Mr. Fuji: A Equipe Rocket ainda está protegendo a torre.');else if(!g.marowakResolved)say('Mr. Fuji: Ajude o espírito da Marowak a encontrar descanso.');else if(!g.pokeFlute){g.pokeFlute=true;say('Mr. Fuji: Obrigado por me salvar! Receba a Poké Flute para despertar Pokémon adormecidos.')}else say('Mr. Fuji: Use a Poké Flute quando encontrar um Pokémon dormindo.')}
+else if(label==='Mãe Marowak'){if(!g.silphScope)say('Um espírito misterioso bloqueia a escada.');else if(!g.marowakResolved)battleStart({name:'Marowak',type:'Fantasma',hp:55,max:55,atk:11,level:30,moves:['Investida']},'Marowak');else say('Cubone está seguro. O espírito de sua mãe descansou.')}
+else if(label==='Dente de Ouro'){if(!g.goldTeeth){g.goldTeeth=true;say('Você encontrou os Gold Teeth. Leve-os ao responsável pela Safari Zone.')}else say('Você já pegou os Gold Teeth.')}
+else if(label==='Casa secreta'){if(!g.surf){g.surf=true;say('O pesquisador entregou Surf. Agora você pode atravessar a água.')}else say('A casa está vazia.')}
+else if(label==='Administrador'){if(g.goldTeeth&&!g.strength){g.strength=true;say('Administrador: Obrigado pelos Gold Teeth! Você recebeu Strength para mover pedras.')}else say(g.strength?'Administrador: Obrigado por ajudar a Safari Zone!':'Administrador: Ainda estamos procurando os Gold Teeth.')}
+else if(label==='Chave do ginásio'){g.mansionKey=true;say('Você encontrou a chave que abre o ginásio de Cinnabar.')}
+else if(label==='Pesquisador'){if(g.fossil){let fossilMon=g.fossil==='Helix'?{name:'Omanyte',type:'Água',hp:35,max:35,atk:8,level:5,moves:['Investida','Jato d’Água']}:{name:'Kabuto',type:'Pedra',hp:38,max:38,atk:9,level:5,moves:['Investida']};fossilMon.nickname=fossilMon.name;fossilMon.xp=0;if(g.party.length<6)g.party.push(fossilMon);else g.pc.push(fossilMon);g.pokedex.push(fossilMon.name);g.fossil=null;save();say('O fóssil foi restaurado! '+fossilMon.name+' entrou para sua equipe ou PC.')}else say('Pesquisador: Traga um fóssil do Monte Lua para restaurá-lo.')}
+else if(label==='Fóssil'){say('Você encontrou dois fósseis. Escolha um para restaurar depois.',[['Helix fóssil',()=>{g.fossil='Helix';save()}],['Domo fóssil',()=>{g.fossil='Domo';save()}]])}
+else if(label==='Esconderijo Rocket'||label==='Silph Co.')say('Equipe Rocket: Você não vai atrapalhar nossos planos!',[['Enfrentar',()=>battleStart({name:'Rocket',type:'Veneno',hp:35,max:35,atk:8,moves:['Investida']},'Rocket')],['Depois',()=>{}]])
+else if(label==='Treinador')battleStart({name:'Treinador',type:'Normal',hp:30,max:30,atk:8,moves:['Investida']},'Treinador');
+else if(label==='Torre Pokémon')say(g.silphScope?'A Torre Pokémon se ergue a leste. Entre para procurar Mr. Fuji.':'Uma presença misteriosa bloqueia o caminho. O Silph Scope pode revelar os fantasmas.')
+else if(label==='Mansão Pokémon')say('Encontrou anotações sobre Mew e Mewtwo. Explore a mansão para achar a chave do ginásio.');
+else if(label==='Safari Zone')say('A Safari Zone tem áreas raras para explorar. Você recebeu 30 Safari Balls. Procure a casa secreta, os Gold Teeth e o administrador.');
+else if(label==='Snorlax'){if(g.snorlaxAwake)say('Snorlax já acordou e deixou o caminho livre.');else if(!g.pokeFlute)say('Snorlax está dormindo e bloqueia a rota.');else battleStart({name:'Snorlax',type:'Normal',hp:65,max:65,atk:12,level:20,moves:['Investida']},'Snorlax')}
+else if(label==='Elite Four e Gary'){if(g.badges<8)say('Conquiste as oito insígnias antes de entrar na Liga.');else if(g.eliteIndex<4){let elite=['Lorelei','Bruno','Agatha','Lance'][g.eliteIndex];battleStart(eliteTeam(g.eliteIndex),elite)}else if(!g.champion)battleStart(championTeam(),'Campeão',true);else say('Você já é o Campeão de Kanto. Explore as Ilhas Sevii!')}
+else if(label==='Celio'){if(g.seviiComplete)say('Celio: A máquina está funcionando. Obrigado por ajudar as Ilhas Sevii!');else if(g.ruby&&g.sapphire){g.seviiComplete=true;g.mission=9;save();say('Celio conectou a máquina com a Ruby e a Sapphire. Novas possibilidades de exploração foram liberadas!')}else if(!g.seviiQuest)say('Celio precisa da Ruby e da Sapphire para consertar a máquina de comunicação.',[['Ajudar',()=>{g.seviiQuest=true;g.mission=7;save();say('Celio: Procure as pedras na caverna ao norte e cuidado com a Equipe Rocket.')}],['Depois',()=>{}]]);else say('Celio: Ainda preciso da Ruby e da Sapphire. A caverna fica ao norte.')}
+else say(label+': Olá, treinador! Boa sorte na sua jornada.');
+save();draw()}
+function chooseStarter(i){let p={...starts[i],level:5,max:starts[i].hp,hp:starts[i].hp,xp:0,nickname:starts[i].name};g.starter=p.name;g.party=[p];g.pokedex.push(p.name);g.seen[p.name]=true;g.mission=2;save();say('Você escolheu '+p.name+'! Quer dar um apelido ao seu novo companheiro?', [['Dar apelido',()=>{let nick=window.prompt('Qual será o apelido?');if(nick&&nick.trim())p.nickname=nick.trim().slice(0,16);save();rivalTutorial(i)}],['Manter nome',()=>rivalTutorial(i)]]);draw()}
+function rivalTutorial(i){let j=(i+1)%3;let e={...starts[j],level:5,max:starts[j].hp,hp:starts[j].hp};say('Gary escolheu '+e.name+'! Ele quer testar sua equipe numa batalha.',[['Batalhar',()=>battleStart(e,'Gary',true)]])}
+function battleStart(enemies,who,rival=false){let roster=(Array.isArray(enemies)?enemies:[enemies]).map(e=>({...e,level:e.level||5,max:e.max||e.hp,hp:e.hp??e.max}));let foe=roster.shift();battle={enemy:foe,queue:roster,who,rival,safari:g.scene.startsWith('safari'),captureAllowed:who==='Selvagem'||who==='Snorlax',captureBonus:.28,escapeRisk:.12,turn:'player',active:Math.max(0,g.party.findIndex(p=>p.hp>0)),note:''};renderBattle()}
+function continueBattle(){if(!battle)return;if(battle.queue.length){battle.enemy=battle.queue.shift();battle.note=battle.who+' enviou '+battle.enemy.name+'!';say(battle.note,[['Continuar',renderBattle]])}else finishBattle()}
+function typeEffect(moveType,targetType){return typeChart[moveType]?.[targetType]??1}
+function damageValue(attacker,defender,moveName){let m=moveData[moveName]||{type:attacker.type||'Normal',power:6};let effect=typeEffect(m.type,defender.type);return {amount:Math.max(1,Math.round((attacker.atk+m.power)*effect/2)),effect}}
+function renderBattle(){if(!battle)return;let e=battle.enemy,idx=battle.active,p=g.party[idx];if(!p||p.hp<=0){idx=g.party.findIndex(x=>x.hp>0);if(idx<0){say('Todos os seus Pokémon desmaiaram. A equipe foi recuperada para você continuar.',[['Continuar',()=>{g.party.forEach(x=>x.hp=x.max);battle=null;save();draw()}]]);return}battle.active=idx;p=g.party[idx]}box.innerHTML='<p><b>'+battle.who+': '+e.name+' Nv.'+e.level+'</b><br>HP '+e.hp+'/'+e.max+' <progress value="'+e.hp+'" max="'+e.max+'"></progress><br><br><b>'+escapeHtml(p.nickname)+' Nv.'+p.level+'</b><br>HP '+p.hp+'/'+p.max+' <progress value="'+p.hp+'" max="'+p.max+'"></progress><br><small>'+battle.note+'</small></p><div class="options"></div>';let row=box.querySelector('.options');if(battle.safari){let ball=document.createElement('button');ball.textContent='Safari Ball ('+g.items.safariBall+')';ball.disabled=!g.items.safariBall;ball.onclick=tryCapture;row.append(ball);let bait=document.createElement('button');bait.textContent='Isca';bait.onclick=()=>safariAction('isca');row.append(bait);let rock=document.createElement('button');rock.textContent='Pedra';rock.onclick=()=>safariAction('pedra');row.append(rock);let run=document.createElement('button');run.textContent='Fugir';run.onclick=()=>safariAction('fugir');row.append(run)}else{p.moves.forEach((mv,i)=>{let b=document.createElement('button');b.textContent=mv;b.onclick=()=>playerAttack(i);row.append(b)});let sw=document.createElement('button');sw.textContent='Trocar Pokémon';sw.onclick=switchMenu;row.append(sw);if(battle.captureAllowed){let b=document.createElement('button');b.textContent='Poké Bola ('+g.items.pokeball+')';b.disabled=!g.items.pokeball;b.onclick=tryCapture;row.append(b)}let b=document.createElement('button');b.textContent='Poção ('+g.items.potion+')';b.disabled=!g.items.potion;b.onclick=usePotion;row.append(b)}box.classList.add('show');row.querySelector('button')?.focus()}
+function safariAction(action){if(!battle||!battle.safari)return;if(action==='fugir'){battle=null;close();save();draw();return}if(action==='isca'){battle.captureBonus=Math.min(.75,battle.captureBonus+.16);battle.escapeRisk=Math.min(.7,battle.escapeRisk+.08);battle.note='A isca facilitou a captura, mas o Pokémon pode fugir.'}else{battle.captureBonus=Math.min(.9,battle.captureBonus+.25);battle.escapeRisk=Math.min(.85,battle.escapeRisk+.25);battle.note='A pedra facilitou a captura, mas deixou o Pokémon arisco.'}if(Math.random()<battle.escapeRisk){let name=battle.enemy.name;battle=null;save();say(name+' fugiu da Safari Zone.',[['Continuar',draw]])}else renderBattle()}
+function switchMenu(){let choices=g.party.map((p,i)=>[p.nickname+' Nv.'+p.level+' HP '+p.hp+'/'+p.max,()=>{if(p.hp<=0){renderBattle();return}battle.active=i;battle.note=p.nickname+' entrou na batalha.';enemyAttack()}]).filter((x,i)=>i!==battle.active&&g.party[i].hp>0);if(!choices.length){say('Não há outro Pokémon saudável para trocar.',[['Voltar',renderBattle]]);return}choices.push(['Cancelar',renderBattle]);say('Escolha quem vai batalhar.',choices)}
+function playerAttack(i){if(!battle)return;let p=g.party[battle.active],mv=p.moves[i],hit=damageValue(p,battle.enemy,mv),enemy=battle.enemy;battle.enemy.hp=Math.max(0,battle.enemy.hp-hit.amount);battle.note=hit.effect>1?'Foi super eficaz!':hit.effect<1?'Não foi muito eficaz.':'';save();if(battle.enemy.hp<=0){let xp=12+enemy.level*3;p.xp=(p.xp||0)+xp;let growth='';if(p.xp>=p.level*20){p.xp=0;p.level++;p.max+=5;p.hp=p.max;growth=' Subiu para o nível '+p.level+'!';let ev={Bulbasaur:'Ivysaur',Charmander:'Charmeleon',Squirtle:'Wartortle',Caterpie:'Metapod',Weedle:'Kakuna'};if(p.level>=16&&ev[p.name]&&!p.evolved){let oldName=p.name;p.name=ev[oldName];p.evolved=true;if(!g.pokedex.includes(p.name))g.pokedex.push(p.name);if(p.nickname===oldName)p.nickname=p.name;growth+=' Evoluiu para '+p.name+'!'}}save();say(enemy.name+' foi derrotado! '+p.nickname+' ganhou '+xp+' XP.'+growth,[['Continuar',continueBattle]])}else enemyAttack()}
+function enemyAttack(){if(!battle)return;let p=g.party[battle.active],moves=battle.enemy.moves||['Investida'],mv=moves[Math.floor(Math.random()*moves.length)],hit=damageValue(battle.enemy,p,mv);p.hp=Math.max(0,p.hp-hit.amount);let note=hit.effect>1?'O ataque inimigo foi super eficaz!':hit.effect<1?'O ataque inimigo não foi muito eficaz.':'';battle.note=[battle.note,note].filter(Boolean).join(' ');save();renderBattle()}
+function usePotion(){if(!battle||!g.items.potion)return;let p=g.party[battle.active];say('Usar uma Poção em '+p.nickname+'?', [['Sim',()=>{g.items.potion--;p.hp=Math.min(p.max,p.hp+20);save();enemyAttack()}],['Não',renderBattle]])}
+function tryCapture(){if(!battle)return;let e=battle.enemy;if(battle.safari){if(!g.items.safariBall)return;g.items.safariBall--;if(Math.random()<battle.captureBonus+(e.hp<e.max/2?.12:0)){let p={...e,nickname:e.name,xp:0};if(g.party.length<6)g.party.push(p);else g.pc.push(p);if(!g.pokedex.includes(e.name))g.pokedex.push(e.name);g.seen[e.name]=true;battle=null;save();say(e.name+' foi capturado na Safari Zone!',[['Continuar',draw]])}else if(Math.random()<battle.escapeRisk){battle=null;save();say('O Pokémon fugiu para a grama alta.',[['Continuar',draw]])}else{battle.note='O Pokémon resistiu à Safari Ball. Tente outro método.';save();renderBattle()}return}if(!battle.captureAllowed)return;if(!g.items.pokeball)return;say('Lançar uma Poké Bola?', [['Sim',()=>{g.items.pokeball--;if(Math.random()<.45||e.hp<e.max/3){let p={...e,nickname:e.name,xp:0};if(g.party.length<6)g.party.push(p);else g.pc.push(p);if(!g.pokedex.includes(e.name))g.pokedex.push(e.name);g.seen[e.name]=true;save();say(e.name+' foi capturado!', [['Continuar',()=>finishBattle()]])}else{say('O Pokémon escapou!', [['Continuar',enemyAttack]])}}],['Não',renderBattle]])}
+function finishBattle(){if(!battle)return;let r=battle.rival,who=battle.who;battle=null;close();if(who==='Gary'&&r&&g.scene==='lab'){g.rival=true;g.mission=3;say('Gary: Da próxima eu ganho! Professor Carvalho: Parabéns. Vá até Viridian pela Route 1 e traga o pacote da loja para mim.')}if(who==='Treinador do Ginásio'){g.gymChallenges=g.gymChallenges||{};g.gymChallenges[g.scene]=true;g.money+=40;say('Você venceu o treinador auxiliar do ginásio e recebeu 40 moedas. O líder está pronto para o desafio.')}if(who==='Gary no navio'&&r){g.shipRival=true;say('Gary: Você não vai me alcançar! Continue treinando.')}if(who==='Campeão'&&r){g.rival=true;g.champion=true;g.mission=6;say('Você venceu Gary e se tornou Campeão de Kanto! A campanha principal terminou. Sua aventura continua nas Ilhas Sevii.',[['Continuar pós-jogo',()=>{g.scene='sevii';g.x=10;g.y=12;save();draw();say('Você chegou às Ilhas Sevii. Converse com Celio para começar uma nova missão.')}],['Tela de título',showTitle]])}if(['Lorelei','Bruno','Agatha','Lance'].includes(who)){g.eliteIndex=Math.min(4,g.eliteIndex+1);say(g.eliteIndex<4?who+' foi derrotado! Prepare-se para o próximo membro da Elite Four.':who+' foi derrotado! Gary é o último desafio.')}if(who==='Recruta Silph 1'){g.silphGuard1=true;say('O primeiro recruta da Silph Co. foi derrotado.')}if(who==='Recruta Silph 2'){g.silphGuard2=true;say('O segundo recruta foi derrotado. O Cartão de Acesso está desprotegido.')}if(who==='Recruta Rocket 1'){g.rocketGuard1=true;say('O primeiro recruta foi derrotado. O painel do próximo andar está liberado.')}if(who==='Recruta Rocket 2'){g.rocketGuard2=true;say('O segundo recruta foi derrotado. O painel central agora pode abrir o caminho a Giovanni.')}if(who==='Equipe Rocket'&&g.scene==='pokemonTower'){g.towerRocketCleared=true;say('A Equipe Rocket foi afastada da torre. Mr. Fuji está logo adiante.')}if(who==='Equipe Rocket'&&g.scene==='nuggetBridge')g.money+=30;if(who==='Marowak'){g.marowakResolved=true;say('O espírito da mãe Marowak descansou. Cubone está seguro.')}if(who==='Giovanni Rocket'){g.rocketCleared=true;g.silphScope=true;g.money+=250;say('Giovanni fugiu! Você encontrou o Silph Scope e ganhou 250 moedas.')}if(who==='Giovanni Silph'){g.silphRescued=true;say('A Silph Co. foi libertada. Seus funcionários voltaram ao trabalho.')}if(who==='Rocket das Ilhas'){g.rocketIslandCleared=true;say('A Equipe Rocket foi derrotada nas Ilhas Sevii. Procure as pedras preciosas para Celio.')}if(who==='Snorlax'){g.snorlaxAwake=true;say('Snorlax acordou e saiu do caminho.')}if(['Brock','Misty','Lt. Surge','Erika','Sabrina','Koga','Blaine','Giovanni'].includes(who)&&!g.defeatedGyms.includes(who)){let badge={Brock:'Boulder Badge',Misty:'Cascade Badge','Lt. Surge':'Thunder Badge',Erika:'Rainbow Badge',Koga:'Soul Badge',Sabrina:'Marsh Badge',Blaine:'Volcano Badge',Giovanni:'Earth Badge'}[who];g.defeatedGyms.push(who);g.badgeNames.push(badge);g.badges=Math.min(8,g.defeatedGyms.length);g.mission=Math.max(g.mission,4);g.money+=100;say('Vitória! Você recebeu a '+badge+' e 100 moedas. Insígnias: '+g.badges+'/8.')}save();draw()}
+function scaledTeam(team,baseLevel){return team.map((p,i)=>{let hp=p.hp+Math.floor(baseLevel/4);return {...p,level:baseLevel+i*2,max:hp,hp,atk:p.atk+Math.floor(baseLevel/10)}})}
+function eliteTeam(i){let teams=[
+[{name:'Dewgong',type:'Água',hp:55,atk:11,moves:['Jato d’Água']},{name:'Cloyster',type:'Água',hp:58,atk:12,moves:['Jato d’Água']},{name:'Lapras',type:'Água',hp:68,atk:13,moves:['Jato d’Água']}],
+[{name:'Onix',type:'Pedra',hp:56,atk:13,moves:['Pedra Lançada']},{name:'Hitmonchan',type:'Lutador',hp:58,atk:14,moves:['Investida']},{name:'Machamp',type:'Lutador',hp:72,atk:16,moves:['Investida']}],
+[{name:'Haunter',type:'Fantasma',hp:55,atk:14,moves:['Psíquico']},{name:'Golbat',type:'Voador',hp:61,atk:14,moves:['Ataque de Asa']},{name:'Gengar',type:'Fantasma',hp:74,atk:16,moves:['Psíquico']}],
+[{name:'Gyarados',type:'Água',hp:72,atk:16,moves:['Jato d’Água']},{name:'Dragonair',type:'Dragão',hp:67,atk:15,moves:['Investida']},{name:'Dragonite',type:'Dragão',hp:88,atk:18,moves:['Ataque de Asa']}]
+];return scaledTeam(teams[i],48+i*2)}
+function championTeam(){let ace={Bulbasaur:{name:'Charizard',type:'Fogo',hp:86,atk:18,moves:['Brasa','Ataque de Asa']},Charmander:{name:'Blastoise',type:'Água',hp:92,atk:17,moves:['Jato d’Água']},Squirtle:{name:'Venusaur',type:'Grama',hp:90,atk:17,moves:['Chicote de Vinha']}}[g.starter]||{name:'Charizard',type:'Fogo',hp:86,atk:18,moves:['Brasa']};return scaledTeam([{name:'Pidgeot',type:'Voador',hp:72,atk:15,moves:['Ataque de Asa']},{name:'Alakazam',type:'Psíquico',hp:68,atk:18,moves:['Psíquico']},{name:'Rhydon',type:'Pedra',hp:82,atk:18,moves:['Pedra Lançada']},{name:'Arcanine',type:'Fogo',hp:78,atk:17,moves:['Brasa']},{name:'Gyarados',type:'Água',hp:84,atk:18,moves:['Jato d’Água']},ace],54)}
+function gymTrainer(){g.gymChallenges=g.gymChallenges||{};if(g.gymChallenges[g.scene]){say('Você já venceu o treinador auxiliar deste ginásio.');return}let teams={pewterGym:[{name:'Geodude',type:'Pedra',hp:32,atk:7,level:8,moves:['Investida']}],ceruleanGym:[{name:'Staryu',type:'Água',hp:40,atk:9,level:18,moves:['Jato d’Água']}],surgeGym:[{name:'Voltorb',type:'Elétrico',hp:45,atk:10,level:21,moves:['Choque do Trovão']}],celadonGym:[{name:'Weepinbell',type:'Grama',hp:58,atk:12,level:24,moves:['Chicote de Vinha']}],saffronGym:[{name:'Kadabra',type:'Psíquico',hp:64,atk:15,level:37,moves:['Psíquico']}],fuchsiaGym:[{name:'Koffing',type:'Veneno',hp:67,atk:14,level:38,moves:['Ferrão']}],cinnabarGym:[{name:'Ponyta',type:'Fogo',hp:75,atk:16,level:42,moves:['Brasa']}],viridianGym:[{name:'Rhyhorn',type:'Terra',hp:82,atk:18,level:48,moves:['Terremoto']}]};battleStart(teams[g.scene]||[{name:'Magnemite',type:'Elétrico',hp:48,atk:11,level:22,moves:['Choque do Trovão']}],'Treinador do Ginásio')}function gym(who){let req={Brock:0,Misty:1,'Lt. Surge':2,Erika:3,Sabrina:4,Koga:5,Blaine:6,Giovanni:7}[who];if(g.defeatedGyms.includes(who)){say(who+': Você já conquistou minha insígnia. Boa sorte na Liga!');return}if(g.badges<req){say(who+': Volte quando tiver mais experiência e insígnias.');return}if(who==='Lt. Surge'&&!g.cut){say('Lt. Surge: Encontre Cut no S.S. Anne antes de entrar no ginásio.');return}if(who==='Lt. Surge'&&!g.surgeDoorOpen){say('Lt. Surge: Ative os dois interruptores para abrir a porta do meu salão.');return}if(who==='Blaine'&&!g.mansionKey){say('Blaine: O ginásio está trancado. Encontre a chave na Mansão Pokémon.');return}let room={Brock:'pewterGym',Misty:'ceruleanGym','Lt. Surge':'surgeGym',Erika:'celadonGym',Sabrina:'saffronGym',Koga:'fuchsiaGym',Blaine:'cinnabarGym',Giovanni:'viridianGym'}[who];g.gymChallenges=g.gymChallenges||{};if(room&&!g.gymChallenges[room]){say(who+': Vença o treinador auxiliar antes de me desafiar.');return}let teams={Brock:[{name:'Geodude',type:'Pedra',hp:30,atk:7,moves:['Investida']},{name:'Onix',type:'Pedra',hp:38,atk:8,moves:['Pedra Lançada']}],Misty:[{name:'Staryu',type:'Água',hp:38,atk:9,moves:['Jato d’Água']},{name:'Starmie',type:'Água',hp:46,atk:11,moves:['Jato d’Água']}],'Lt. Surge':[{name:'Voltorb',type:'Elétrico',hp:40,atk:11,moves:['Choque do Trovão']},{name:'Pikachu',type:'Elétrico',hp:43,atk:12,moves:['Choque do Trovão']},{name:'Raichu',type:'Elétrico',hp:52,atk:13,moves:['Choque do Trovão']}],Erika:[{name:'Victreebel',type:'Grama',hp:52,atk:12,moves:['Chicote de Vinha']},{name:'Tangela',type:'Grama',hp:50,atk:11,moves:['Chicote de Vinha']},{name:'Vileplume',type:'Grama',hp:60,atk:13,moves:['Chicote de Vinha']}],Sabrina:[{name:'Kadabra',type:'Psíquico',hp:52,atk:14,moves:['Psíquico']},{name:'Mr. Mime',type:'Psíquico',hp:56,atk:13,moves:['Psíquico']},{name:'Alakazam',type:'Psíquico',hp:63,atk:16,moves:['Psíquico']}],Koga:[{name:'Koffing',type:'Veneno',hp:54,atk:13,moves:['Ferrão']},{name:'Muk',type:'Veneno',hp:66,atk:14,moves:['Ferrão']},{name:'Weezing',type:'Veneno',hp:70,atk:15,moves:['Ferrão']}],Blaine:[{name:'Growlithe',type:'Fogo',hp:64,atk:15,moves:['Brasa']},{name:'Ponyta',type:'Fogo',hp:68,atk:16,moves:['Brasa']},{name:'Arcanine',type:'Fogo',hp:80,atk:17,moves:['Brasa']}],Giovanni:[{name:'Rhyhorn',type:'Terra',hp:73,atk:16,moves:['Terremoto']},{name:'Dugtrio',type:'Terra',hp:66,atk:17,moves:['Terremoto']},{name:'Nidoking',type:'Terra',hp:82,atk:18,moves:['Terremoto']}]};battleStart(scaledTeam(teams[who],8+g.badges*5),who)}
+function wildBattle(){let route1=[{name:'Pidgey',type:'Voador',hp:22,atk:6,moves:['Investida','Ataque de Asa']},{name:'Rattata',type:'Normal',hp:23,atk:6,moves:['Investida']}],forest=[{name:'Caterpie',type:'Inseto',hp:20,atk:5,moves:['Investida','Ferrão']},{name:'Weedle',type:'Inseto',hp:19,atk:6,moves:['Investida','Ferrão']},{name:'Pikachu',type:'Elétrico',hp:24,atk:8,moves:['Investida','Choque do Trovão']}],route3=[{name:'Spearow',type:'Voador',hp:27,atk:8,moves:['Investida','Ataque de Asa']},{name:'Jigglypuff',type:'Normal',hp:33,atk:6,moves:['Investida']}],moon=[{name:'Geodude',type:'Pedra',hp:30,atk:8,moves:['Investida']},{name:'Zubat',type:'Voador',hp:21,atk:7,moves:['Investida']}],route9=[{name:'Nidoran',type:'Veneno',hp:34,atk:9,moves:['Investida']},{name:'Spearow',type:'Voador',hp:30,atk:9,moves:['Investida','Ataque de Asa']}],route10=[{name:'Voltorb',type:'Elétrico',hp:32,atk:10,moves:['Choque do Trovão']},{name:'Geodude',type:'Pedra',hp:36,atk:10,moves:['Investida']}],rock=[{name:'Onix',type:'Pedra',hp:45,atk:10,moves:['Investida']},{name:'Machop',type:'Lutador',hp:38,atk:12,moves:['Investida']},{name:'Zubat',type:'Voador',hp:30,atk:9,moves:['Ataque de Asa']}],route12=[{name:'Oddish',type:'Grama',hp:38,atk:10,moves:['Chicote de Vinha']},{name:'Venonat',type:'Inseto',hp:40,atk:10,moves:['Ferrão']},{name:'Pidgeotto',type:'Voador',hp:39,atk:11,moves:['Ataque de Asa']}],tower=[{name:'Gastly',type:'Fantasma',hp:34,atk:11,moves:['Investida']},{name:'Haunter',type:'Fantasma',hp:43,atk:13,moves:['Investida']}],safari=[{name:'Scyther',type:'Inseto',hp:52,atk:13,moves:['Ataque de Asa']},{name:'Kangaskhan',type:'Normal',hp:58,atk:14,moves:['Investida']},{name:'Dratini',type:'Dragão',hp:42,atk:11,moves:['Investida']},{name:'Chansey',type:'Normal',hp:65,atk:7,moves:['Investida']}];let diglett=[{name:'Diglett',type:'Terra',hp:25,atk:9,moves:['Terremoto']},{name:'Dugtrio',type:'Terra',hp:39,atk:13,moves:['Terremoto']}],route5=[{name:'Oddish',type:'Grama',hp:29,atk:8,moves:['Chicote de Vinha']},{name:'Pidgey',type:'Voador',hp:23,atk:7,moves:['Ataque de Asa']}],route6=[{name:'Meowth',type:'Normal',hp:28,atk:8,moves:['Investida']},{name:'Pidgey',type:'Voador',hp:24,atk:7,moves:['Ataque de Asa']}],route11=[{name:'Spearow',type:'Voador',hp:35,atk:10,moves:['Ataque de Asa']},{name:'Drowzee',type:'Psíquico',hp:37,atk:9,moves:['Psíquico']}],route7=[{name:'Growlithe',type:'Fogo',hp:37,atk:11,moves:['Brasa']},{name:'Pidgeotto',type:'Voador',hp:38,atk:11,moves:['Ataque de Asa']}],mansion=[{name:'Koffing',type:'Veneno',hp:45,atk:12,moves:['Ferrão']},{name:'Ponyta',type:'Fogo',hp:48,atk:13,moves:['Brasa']}],island=[{name:'Psyduck',type:'Água',hp:50,atk:13,moves:['Jato d’Água']},{name:'Hoppip',type:'Grama',hp:44,atk:11,moves:['Chicote de Vinha']}],islandCave=[{name:'Onix',type:'Pedra',hp:66,atk:15,moves:['Pedra Lançada']},{name:'Slugma',type:'Fogo',hp:58,atk:14,moves:['Brasa']}];let pools={route1,route2:route1,forest,route3,moon,route5,route6,route9,route10,route11,diglettCave:diglett,rockTunnel:rock,pokemonTower:tower,route7,route8:route7,route12,safariZone:safari,safariEast:safari,safariNorth:safari,safariDeep:safari,pokemonMansion:mansion,seviiRoute:island,seviiCave:islandCave};let pool=pools[g.scene]||route1,base=pool[Math.floor(Math.random()*pool.length)],levels={route1:2,route2:4,forest:4,route3:7,moon:7,route5:10,route6:10,route9:15,route10:15,route11:15,diglettCave:16,rockTunnel:18,pokemonTower:20,route7:18,route8:18,route12:25,safariZone:25,safariEast:25,safariNorth:25,safariDeep:28,pokemonMansion:28,seviiRoute:34,seviiCave:38},level=(levels[g.scene]||4)+Math.floor(Math.random()*3),hp=base.hp+level;g.seen[base.name]=true;if(g.pokedexObtained&&!g.pokedex.includes(base.name))g.pokedex.push(base.name);save();battleStart({...base,level,max:hp,hp},'Selvagem')}
+function pcStore(){if(g.party.length<=1){say('Você precisa manter ao menos um Pokémon na equipe.');return}say('Qual Pokémon deseja guardar?',g.party.map((p,i)=>[p.nickname,()=>{g.pc.push(g.party.splice(i,1)[0]);save();say('Pokémon guardado no PC.')}]))}
+function pcTake(){if(g.party.length>=6){say('Sua equipe já tem seis Pokémon.');return}if(!g.pc.length){say('O PC está vazio.');return}say('Qual Pokémon deseja retirar?',g.pc.map((p,i)=>[p.nickname,()=>{g.party.push(g.pc.splice(i,1)[0]);save();say('Pokémon retirado do PC.')}]))}
+function shop(){if(g.returnTo==='viridian'&&g.mission>=4&&g.mission<5&&!g.package){g.package=true;g.items.potion++;save();say('O atendente entrega o pacote para o Professor Carvalho. Você recebeu uma Poção. Volte ao laboratório!');return}say('Loja Pokémon — você tem '+g.money+' moedas.', [['Poção — 10 moedas',()=>{if(g.money<10){say('Você não tem moedas suficientes.');return}g.money-=10;g.items.potion++;save();say('Você comprou uma Poção.')}],['Poké Bola — 20 moedas',()=>{if(g.money<20){say('Você não tem moedas suficientes.');return}g.money-=20;g.items.pokeball++;save();say('Você comprou uma Poké Bola.')}],['Sair',()=>{}]])}
+function bagOpen(){menu=false;let use=()=>{if(!g.items.potion){say('Você não tem Poções.',[['Voltar',bagOpen]]);return}let targets=g.party.map((p,i)=>({p,i})).filter(x=>x.p.hp>0&&x.p.hp<x.p.max);if(!targets.length){say('Nenhum Pokémon saudável precisa de cura agora.',[['Voltar',bagOpen]]);return}say('Escolha um Pokémon para usar a Poção.',targets.map(({p,i})=>[p.nickname+' — HP '+p.hp+'/'+p.max,()=>{g.items.potion--;let before=p.hp;p.hp=Math.min(p.max,p.hp+20);save();say(p.nickname+' recuperou '+(p.hp-before)+' pontos de vida.')}]).concat([['Voltar',bagOpen]]))};say('Mochila — '+g.money+' moedas · Poké Bolas: '+g.items.pokeball+' · Safari Balls: '+g.items.safariBall+' · Poções: '+g.items.potion,[['Usar Poção',use],['Voltar',()=>menuOpen()]])}function menuOpen(){menu=true;say('Menu de aventura', [['Equipe',()=>{menu=false;say(g.party.length?g.party.map(p=>p.nickname+' Nv.'+p.level+' HP '+p.hp+'/'+p.max).join(' · '):'Sua equipe está vazia.')}],['Mochila',bagOpen],['Insígnias',()=>{menu=false;say(g.badgeNames.length?g.badgeNames.join(' · '):'Você ainda não conquistou insígnias.')}],['Pokédex',()=>{menu=false;say(g.pokedexObtained?'Pokémon registrados: '+(g.pokedex.join(', ')||'nenhum'):'Você ainda não recebeu a Pokédex. Leve o pacote da loja ao Professor Carvalho.')}],['Salvar',()=>{menu=false;save();say('Progresso salvo.')}],['Voltar',()=>{menu=false}]])}
+function key(e){let k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();if(box.classList.contains('show')){if(k==='escape'||k==='x'){if(!battle)close();return}if(k==='enter'||k==='z'){(document.activeElement?.tagName==='BUTTON'?document.activeElement:box.querySelector('button'))?.click();return}if(k==='arrowup'||k==='arrowdown'){let bs=[...box.querySelectorAll('button')],i=bs.indexOf(document.activeElement);if(bs.length){i=(i+(k==='arrowdown'?1:-1)+bs.length)%bs.length;bs[i].focus()}return}return}if(k==='arrowup'||k==='w')move(0,-1);else if(k==='arrowdown'||k==='s')move(0,1);else if(k==='arrowleft'||k==='a')move(-1,0);else if(k==='arrowright'||k==='d')move(1,0);else if(k==='z'||k==='enter')interact();else if(k==='x'||k==='escape')menuOpen()}
+window.addEventListener('keydown',key);
+function startNew(){g=newState();battle=null;save();draw();say('Bem-vindo! Você acordou em seu quarto em Pallet Town. Desça as escadas e converse com sua mãe.',[['Começar',()=>{}]])}
+function showTitle(){let has=hasSave();let choices=[['Novo jogo',startNew]];if(has)choices.push(['Continuar',()=>{load();draw();say('Jornada carregada. '+objective())}]);choices.push(['Opções',()=>say('Controles: setas ou WASD para andar, Z ou Enter para conversar e escolher, X ou Esc para abrir o menu. O progresso é salvo automaticamente.',[['Voltar ao título',showTitle]])]);say('JORNADA EM KANTO · A aventura começa em Pallet Town.',choices)}
+function init(){load();draw();document.querySelector('#cover-start').addEventListener('click',()=>{document.querySelector('#lucamon-cover').hidden=true;showTitle()});document.querySelector('#cover-continue').addEventListener('click',()=>{document.querySelector('#lucamon-cover').hidden=true;if(hasSave()){load();draw();say('Jornada carregada. '+objective())}else showTitle()})}
+init();
+})();
+</script></body></html>
